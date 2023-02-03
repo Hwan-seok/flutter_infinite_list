@@ -1,14 +1,15 @@
 import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
-import 'package:infinite_list_bloc/src/bloc/infinite_list_state.dart';
-import 'package:infinite_list_bloc/src/core/types.dart';
-import 'package:infinite_list_bloc/src/model/infinite_list.dart';
+import 'package:bloc_infinite_list/src/bloc/infinite_list_state.dart';
+import 'package:bloc_infinite_list/src/core/types.dart';
+import 'package:bloc_infinite_list/src/model/infinite_list.dart';
+import 'package:dio/dio.dart';
 import 'package:meta/meta.dart';
 
 mixin InfiniteListMutable<ElementType,
     State extends InfiniteListState<ElementType, State>> on BlocBase<State> {
-  static dynamic Function()? createCancelToken;
+  static CancelToken Function() createCancelToken = CancelToken.new;
   static bool Function(Object e)? isErrorCanceled;
 
   @protected
@@ -18,7 +19,7 @@ mixin InfiniteListMutable<ElementType,
   PagedSliceFetcher<ElementType, State>? fetch;
 
   @protected
-  dynamic cancelToken;
+  CancelToken? cancelToken;
 
   @override
   Future<void> close() async {
@@ -53,8 +54,11 @@ mixin InfiniteListMutable<ElementType,
     );
   }
 
-  void replace(ElementType before, ElementType after,
-      {Emitter<State>? emitter}) {
+  void replace(
+    ElementType before,
+    ElementType after, {
+    Emitter<State>? emitter,
+  }) {
     final emitCall = emitter?.call ?? emit;
     emitCall(
       state.copyWith(
@@ -127,7 +131,7 @@ mixin InfiniteListMutable<ElementType,
 
     if (state.infList.isFetchNotNeeded && !reset) return;
     emitCall(state.copyWith(infList: state.infList.copyToLoading()));
-    cancelToken = createCancelToken?.call();
+    cancelToken = createCancelToken();
 
     try {
       final fetchedResult = await fetch!.call(

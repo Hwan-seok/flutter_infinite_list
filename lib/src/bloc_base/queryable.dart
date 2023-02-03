@@ -1,6 +1,6 @@
 import 'package:bloc/bloc.dart';
+import 'package:bloc_infinite_list/src/bloc/infinite_list_state.dart';
 import 'package:collection/collection.dart';
-import 'package:infinite_list_bloc/src/bloc/infinite_list_state.dart';
 
 mixin InfiniteListQueryable<ElementType,
     State extends InfiniteListState<ElementType, State>> on BlocBase<State> {

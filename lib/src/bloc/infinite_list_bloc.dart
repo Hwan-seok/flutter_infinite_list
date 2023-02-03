@@ -1,10 +1,10 @@
 import 'package:bloc/bloc.dart';
 import 'package:bloc_concurrency/bloc_concurrency.dart';
-import 'package:infinite_list_bloc/src/bloc/infinite_list_event.dart';
-import 'package:infinite_list_bloc/src/bloc/infinite_list_state.dart';
-import 'package:infinite_list_bloc/src/bloc_base/mutable.dart';
-import 'package:infinite_list_bloc/src/bloc_base/queryable.dart';
-import 'package:infinite_list_bloc/src/core/types.dart';
+import 'package:bloc_infinite_list/src/bloc/infinite_list_event.dart';
+import 'package:bloc_infinite_list/src/bloc/infinite_list_state.dart';
+import 'package:bloc_infinite_list/src/bloc_base/mutable.dart';
+import 'package:bloc_infinite_list/src/bloc_base/queryable.dart';
+import 'package:bloc_infinite_list/src/core/types.dart';
 import 'package:meta/meta.dart';
 
 abstract class InfiniteListBloc<
@@ -27,10 +27,14 @@ abstract class InfiniteListBloc<
       registerLimit(limit);
     }
 
-    on<InfiniteListFetchNextEvent<ElementType>>(_fetchNext,
-        transformer: droppable());
-    on<InfiniteListReinitializeEvent<ElementType>>(_reinitialize,
-        transformer: droppable());
+    on<InfiniteListFetchNextEvent<ElementType>>(
+      _fetchNext,
+      transformer: droppable(),
+    );
+    on<InfiniteListReinitializeEvent<ElementType>>(
+      _reinitialize,
+      transformer: droppable(),
+    );
     on<InfiniteListResetEvent<ElementType>>(_reset);
 
     on<InfiniteListAddItemEvent<ElementType>>(_addItem);
@@ -58,8 +62,11 @@ abstract class InfiniteListBloc<
       super.addItems(items, emitter: emitter);
 
   @override
-  void replace(ElementType before, ElementType after,
-          {Emitter<State>? emitter}) =>
+  void replace(
+    ElementType before,
+    ElementType after, {
+    Emitter<State>? emitter,
+  }) =>
       super.replace(before, after, emitter: emitter);
 
   @override
@@ -133,8 +140,11 @@ abstract class InfiniteListBloc<
     InfiniteListReplaceWhereEvent<ElementType> event,
     Emitter<State> emit,
   ) =>
-      super.replaceWhere(event.test, event.willReplacedItemGenerator,
-          emitter: emit);
+      super.replaceWhere(
+        event.test,
+        event.willReplacedItemGenerator,
+        emitter: emit,
+      );
 
   void _insert(
     InfiniteListInsertEvent<ElementType> event,

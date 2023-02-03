@@ -1,4 +1,4 @@
-import 'package:infinite_list_bloc/src/model/slice.dart';
+import 'package:bloc_infinite_list/src/model/slice.dart';
 
 class Pageable<T> extends Slice<T> {
   const Pageable(

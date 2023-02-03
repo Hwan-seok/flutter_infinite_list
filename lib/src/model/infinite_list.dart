@@ -1,7 +1,7 @@
+import 'package:bloc_infinite_list/src/model/pageable.dart';
+import 'package:bloc_infinite_list/src/model/slice.dart';
 import 'package:collection/collection.dart';
 import 'package:equatable/equatable.dart';
-import 'package:infinite_list_bloc/src/model/pageable.dart';
-import 'package:infinite_list_bloc/src/model/slice.dart';
 
 enum InfiniteListStatus {
   initial,

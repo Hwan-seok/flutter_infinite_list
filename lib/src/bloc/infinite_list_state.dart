@@ -1,5 +1,5 @@
+import 'package:bloc_infinite_list/src/model/infinite_list.dart';
 import 'package:equatable/equatable.dart';
-import 'package:infinite_list_bloc/src/model/infinite_list.dart';
 
 abstract class InfiniteListState<T, R> with EquatableMixin {
   final InfiniteList<T> infList;

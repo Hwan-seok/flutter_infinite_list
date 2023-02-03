@@ -1,39 +1,87 @@
-<!--
-This README describes the package. If you publish this package to pub.dev,
-this README's contents appear on the landing page for your package.
 
-For information about how to write a good package README, see the guide for
-[writing package pages](https://dart.dev/guides/libraries/writing-package-pages).
+# How to use
 
-For general information about developing packages, see the Dart guide for
-[creating packages](https://dart.dev/guides/libraries/create-library-packages)
-and the Flutter guide for
-[developing packages and plugins](https://flutter.dev/developing-packages).
--->
-
-TODO: Put a short description of the package here that helps potential users
-know whether this package might be useful for them.
-
-## Features
-
-TODO: List what your package can do. Maybe include images, gifs, or videos.
-
-## Getting started
-
-TODO: List prerequisites and provide or point to information on how to
-start using the package.
-
-## Usage
-
-TODO: Include short and useful examples for package users. Add longer examples
-to `/example` folder.
-
+## Cubit
+### Default state
 ```dart
-const like = 'sample';
+class PlayerCubit extends DefaultInfiniteListCubit<Player> {
+  PlayerCubit(
+    PlayerRepository playerRepository,
+  ) : super(
+    initialState: DefaultInfiniteListState(),
+    fetch: (page, size, cancelToken, state) => 
+                                  playerRepository.getAll(
+                                    page: page,
+                                    size: size,
+                                    cancelToken: cancelToken,
+                                  ),
+    );
+}
 ```
 
-## Additional information
+### Custom state
+```dart
+class PlayerState extends InfiniteListState<Player, PlayerState> {
+  final int id;
 
-TODO: Tell users more about the package: where to find more information, how to
-contribute to the package, how to file issues, what response they can expect
-from the package authors, and more.
+  PlayerState({
+    super.infList,
+    required this.id,
+  });
+
+  ...
+}
+
+class PlayerCubit extends InfiniteListCubit<Player, PlayerState> {
+  PlayerCubit(
+    PlayerRepository playerRepository,
+  ) : super(
+    initialState: DefaultInfiniteListState(),
+    fetch: (page, size, cancelToken, state) => 
+                                  playerRepository.getAll(
+                                    page: page,
+                                    size: size,
+                                    cancelToken: cancelToken,
+                                  ),
+    );
+}
+```
+
+## Bloc
+
+### Default event & state
+
+```dart
+class FoodBloc extends DefaultInfiniteListBloc<Food> {
+    ...same as cubit
+}
+
+add(InfiniteListEvent.fetchNext());
+```
+
+### Custom event & state
+
+```dart
+
+abstract class FoodEvent extends InfiniteListEvent<Food> {
+  const FoodEvent();
+}
+
+abstract class FoodEventHadForLaunch extends InfiniteListEvent<Food> {
+  const FoodEventHadForLaunch();
+}
+
+---
+
+class FoodBloc extends InfiniteListBloc<Food, FoodEvent, FoodState> {
+  FoodBloc(){
+    ... other default events are automatically registered by library.
+    on<FoodEventHadForLaunch>(_onHadForLaunch)
+  }
+
+  _onHadForLaunch(event, emit);
+}
+
+add(InfiniteListEvent.fetchNext());
+add(FoodEventHadForLaunch());
+```

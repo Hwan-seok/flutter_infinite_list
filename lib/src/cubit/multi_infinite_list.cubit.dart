@@ -1,11 +1,12 @@
 import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
-import 'package:infinite_list_bloc/src/bloc/infinite_list_state.dart';
-import 'package:infinite_list_bloc/src/bloc_base/mutable.dart';
-import 'package:infinite_list_bloc/src/core/types.dart';
-import 'package:infinite_list_bloc/src/model/infinite_list.dart';
-import 'package:infinite_list_bloc/src/model/slice.dart';
+import 'package:bloc_infinite_list/src/bloc/infinite_list_state.dart';
+import 'package:bloc_infinite_list/src/bloc_base/mutable.dart';
+import 'package:bloc_infinite_list/src/core/types.dart';
+import 'package:bloc_infinite_list/src/model/infinite_list.dart';
+import 'package:bloc_infinite_list/src/model/slice.dart';
+import 'package:dio/dio.dart';
 import 'package:meta/meta.dart';
 
 abstract class MultiInfiniteListCubit<KeyType, ElementType,
@@ -22,10 +23,12 @@ abstract class MultiInfiniteListCubit<KeyType, ElementType,
   final keyToLimits = <KeyType, int>{};
 
   @visibleForTesting
-  final keyToCancelTokens = <KeyType, dynamic>{};
+  final keyToCancelTokens = <KeyType, CancelToken>{};
 
   void registerFetch(
-          KeyType key, PagedSliceFetcher<ElementType, State> fetch) =>
+    KeyType key,
+    PagedSliceFetcher<ElementType, State> fetch,
+  ) =>
       keyToFetches[key] = fetch;
 
   void registerLimit(KeyType key, int limit) => keyToLimits[key] = limit;
@@ -59,13 +62,13 @@ abstract class MultiInfiniteListCubit<KeyType, ElementType,
       final fetch = keyToFetches[key],
           limit = keyToLimits[key],
           list = state.keysToInfLists[key];
-      assert(fetch != null, '[$key] registerFetch 누락됨');
-      assert(limit != null, '[$key] registerLimit 누락됨');
-      assert(list != null, '[$key] list 생성 누락됨');
+      assert(fetch != null, '[$key] registerFetch is missing');
+      assert(limit != null, '[$key] registerLimit is missing');
+      assert(list != null, '[$key] list is missing');
       if (fetch == null || limit == null || list == null) return;
 
-      final cancelToken = keyToCancelTokens[key] =
-          InfiniteListMutable.createCancelToken?.call();
+      final cancelToken =
+          keyToCancelTokens[key] = InfiniteListMutable.createCancelToken();
       final fetchedResult = await fetch.call(
         list.shouldFetchPage,
         limit,
@@ -107,7 +110,7 @@ abstract class MultiInfiniteListCubit<KeyType, ElementType,
   @mustCallSuper
   void resetAll() {
     final keys = state.keysToInfLists.keys;
-    for (var token in keyToCancelTokens.values) {
+    for (final token in keyToCancelTokens.values) {
       token.cancel();
     }
     emit(
