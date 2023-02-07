@@ -1,3 +1,7 @@
+## 0.0.4
+
+* feat: Enable serialize/deserialize to pageable and slice.
+
 ## 0.0.3
 
 * fix: Export all functionalities.
