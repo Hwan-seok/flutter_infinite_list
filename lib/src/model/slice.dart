@@ -1,15 +1,13 @@
+import 'package:json_annotation/json_annotation.dart';
+
+part 'slice.g.dart';
+
+@JsonSerializable(genericArgumentFactories: true)
 class Slice<T> {
   const Slice(
     this.content,
     this.last,
   );
-
-  final List<T> content;
-  final bool last;
-
-  bool get isEmpty => content.isEmpty;
-  bool get isNotEmpty => content.isNotEmpty;
-  bool get hasNext => !last;
 
   factory Slice.fromJson(
     Map<String, dynamic> json,
@@ -21,22 +19,11 @@ class Slice<T> {
     Object Function(T value) toJsonT,
   ) =>
       _$SliceToJson(this, toJsonT);
+
+  final List<T> content;
+  final bool last;
+
+  bool get isEmpty => content.isEmpty;
+  bool get isNotEmpty => content.isNotEmpty;
+  bool get hasNext => !last;
 }
-
-Slice<T> _$SliceFromJson<T>(
-  Map<String, dynamic> json,
-  T Function(Object? json) fromJsonT,
-) =>
-    Slice<T>(
-      (json['content'] as List<dynamic>).map(fromJsonT).toList(),
-      json['last'] as bool,
-    );
-
-Map<String, dynamic> _$SliceToJson<T>(
-  Slice<T> instance,
-  Object? Function(T value) toJsonT,
-) =>
-    <String, dynamic>{
-      'content': instance.content.map(toJsonT).toList(),
-      'last': instance.last,
-    };
