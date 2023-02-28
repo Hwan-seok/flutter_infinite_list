@@ -1,3 +1,7 @@
+## 0.0.5
+
+* fix: RemoveAt returns abnormal list
+
 ## 0.0.4
 
 * feat: Enable serialize/deserialize to pageable and slice.
