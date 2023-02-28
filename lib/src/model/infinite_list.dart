@@ -19,12 +19,10 @@ enum InfiniteListStatus {
 }
 
 class InfiniteList<T> extends Equatable {
-  final List<T> items;
-  final int shouldFetchPage;
-
-  final InfiniteListStatus status;
-
-  final int? itemCountIncludeNotFetched;
+  factory InfiniteList.fromSlice({
+    required Slice<T> slice,
+  }) =>
+      InfiniteList<T>().addSlice(slice);
 
   const InfiniteList({
     this.items = const [],
@@ -32,6 +30,12 @@ class InfiniteList<T> extends Equatable {
     this.status = InfiniteListStatus.initial,
     this.itemCountIncludeNotFetched,
   });
+  final List<T> items;
+  final int shouldFetchPage;
+
+  final InfiniteListStatus status;
+
+  final int? itemCountIncludeNotFetched;
 
   InfiniteList<T> copyWith({
     List<T>? items,
@@ -48,11 +52,6 @@ class InfiniteList<T> extends Equatable {
           : this.itemCountIncludeNotFetched,
     );
   }
-
-  factory InfiniteList.fromSlice({
-    required Slice<T> slice,
-  }) =>
-      InfiniteList<T>().addSlice(slice);
 
   /// ------------------------------------------ Queries
 
@@ -144,7 +143,7 @@ class InfiniteList<T> extends Equatable {
     return copyWith(
       items: [
         for (var j = 0; j < items.length; j++)
-          if (idx != j) items[idx],
+          if (j != idx) items[j],
       ],
     );
   }
