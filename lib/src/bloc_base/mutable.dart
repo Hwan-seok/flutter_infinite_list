@@ -15,10 +15,10 @@ mixin InfiniteListMutable<ElementType,
   @protected
   int limit = 10;
 
-  @protected
+  @internal
   PagedSliceFetcher<ElementType, State>? fetch;
 
-  @protected
+  @internal
   CancelToken? cancelToken;
 
   @override
@@ -36,6 +36,7 @@ mixin InfiniteListMutable<ElementType,
 
   void cancelRequest() => cancelToken?.cancel();
 
+  @internal
   void addItem(ElementType item, {Emitter<State>? emitter}) {
     final emitCall = emitter?.call ?? emit;
     emitCall(
@@ -45,6 +46,7 @@ mixin InfiniteListMutable<ElementType,
     );
   }
 
+  @internal
   void addItems(Iterable<ElementType> items, {Emitter<State>? emitter}) {
     final emitCall = emitter?.call ?? emit;
     emitCall(
@@ -54,6 +56,7 @@ mixin InfiniteListMutable<ElementType,
     );
   }
 
+  @internal
   void replace(
     ElementType before,
     ElementType after, {
@@ -67,6 +70,7 @@ mixin InfiniteListMutable<ElementType,
     );
   }
 
+  @internal
   void replaceAt(int idx, ElementType item, {Emitter<State>? emitter}) {
     final emitCall = emitter?.call ?? emit;
     emitCall(
@@ -76,6 +80,7 @@ mixin InfiniteListMutable<ElementType,
     );
   }
 
+  @internal
   void replaceWhere(
     bool Function(ElementType) test,
     ElementType Function(ElementType element) willReplacedItemGenerator, {
@@ -89,6 +94,7 @@ mixin InfiniteListMutable<ElementType,
     );
   }
 
+  @internal
   void insert(int idx, ElementType item, {Emitter<State>? emitter}) {
     final emitCall = emitter?.call ?? emit;
     emitCall(
@@ -98,6 +104,7 @@ mixin InfiniteListMutable<ElementType,
     );
   }
 
+  @internal
   void remove(ElementType item, {Emitter<State>? emitter}) {
     final emitCall = emitter?.call ?? emit;
     emitCall(
@@ -107,6 +114,7 @@ mixin InfiniteListMutable<ElementType,
     );
   }
 
+  @internal
   void removeAt(int idx, {Emitter<State>? emitter}) {
     final emitCall = emitter?.call ?? emit;
     emitCall(
@@ -116,6 +124,7 @@ mixin InfiniteListMutable<ElementType,
     );
   }
 
+  @internal
   void reset({Emitter<State>? emitter}) {
     final emitCall = emitter?.call ?? emit;
     cancelRequest();
@@ -126,6 +135,7 @@ mixin InfiniteListMutable<ElementType,
     );
   }
 
+  @internal
   Future<void> fetchNext({bool reset = false, Emitter<State>? emitter}) async {
     final emitCall = emitter?.call ?? emit;
 
@@ -165,6 +175,7 @@ mixin InfiniteListMutable<ElementType,
     }
   }
 
+  @internal
   Future<void> reinitialize({Emitter<State>? emitter}) async {
     await fetchNext(reset: true, emitter: emitter);
   }
