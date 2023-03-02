@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:bloc_infinite_list/bloc_infinite_list.dart';
 import 'package:dio/dio.dart';
+import 'package:fake_async/fake_async.dart';
 import 'package:test/test.dart';
 
 Future<Slice<int>> _fetch(
@@ -28,7 +29,9 @@ class MyInfiniteListBloc extends DefaultInfiniteListBloc<int> {
 void main() {
   late MyInfiniteListBloc bloc;
 
-  setUp(() => bloc = MyInfiniteListBloc()..registerLimit(5));
+  MyInfiniteListBloc setBloc() => bloc = MyInfiniteListBloc()..registerLimit(5);
+
+  setUp(setBloc);
 
   group('add', () {
     test('needs waiting for microtask to ensure ops to be completed', () async {
@@ -165,12 +168,16 @@ void main() {
   });
 
   group('fetchNext', () {
-    test('needs waiting for microtask to ensure ops to be completed', () async {
-      unawaited(bloc.triggerFetchNext());
-      expect(bloc.state.items, []);
-      await Future.delayed(const Duration(seconds: 3));
+    test('needs waiting for microtask to ensure ops to be completed', () {
+      fakeAsync((async) {
+        // Bloc should be set within the fakeAsync bloc because
+        // FakeAsync is internally uses a zone and it affects only in the callback closure but not in [setup]
+        bloc = setBloc()..triggerFetchNext();
+        expect(bloc.state.items, []);
+        async.elapse(const Duration(seconds: 5));
 
-      expect(bloc.state.items, [0, 1, 2, 3, 4]);
+        expect(bloc.state.items, [0, 1, 2, 3, 4]);
+      });
     });
 
     test('can be awaited', () async {
@@ -197,13 +204,17 @@ void main() {
   });
 
   group('reinitialize', () {
-    test('needs waiting for microtask to ensure ops to be completed', () async {
-      await bloc.triggerAddAll([5, 6, 7]);
+    test('needs waiting for microtask to ensure ops to be completed', () {
+      fakeAsync((async) {
+        bloc = setBloc()..triggerAddAll([5, 6, 7]);
+        async.flushMicrotasks();
 
-      unawaited(bloc.triggerReinitialize());
-      expect(bloc.state.items, [5, 6, 7]);
-      await Future.delayed(const Duration(seconds: 3));
-      expect(bloc.state.items, [0, 1, 2, 3, 4]);
+        bloc.triggerReinitialize();
+        expect(bloc.state.items, [5, 6, 7]);
+
+        async.elapse(const Duration(seconds: 5));
+        expect(bloc.state.items, [0, 1, 2, 3, 4]);
+      });
     });
 
     test('can be awaited', () async {
