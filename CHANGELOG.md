@@ -1,3 +1,9 @@
+## 0.1.0
+
+* test: Update tests using fake_async
+* feat: Mark mutable method as internal
+
+
 ## 0.0.6
 
 * chore: disable sort_constructors_first from analysis
