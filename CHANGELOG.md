@@ -1,3 +1,9 @@
+## 0.0.6
+
+* chore: disable sort_constructors_first from analysis
+* feat: Add ability to notify complete event in the bloc
+* test: Add tests for notifying bloc
+
 ## 0.0.5
 
 * fix: RemoveAt returns abnormal list
