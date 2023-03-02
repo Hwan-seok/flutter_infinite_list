@@ -1,88 +1,88 @@
-abstract class InfiniteListEvent<T> {
-  const InfiniteListEvent();
+import 'package:bloc_infinite_list/src/core/completable.dart';
 
-  const factory InfiniteListEvent.fetchNext() = InfiniteListFetchNextEvent;
-  const factory InfiniteListEvent.reinitialize() = InfiniteListReinitializeEvent;
-  const factory InfiniteListEvent.reset() = InfiniteListResetEvent;
+abstract class InfiniteListEvent<T> with Completable {
+  InfiniteListEvent();
 
-  const factory InfiniteListEvent.addItem(T item) = InfiniteListAddItemEvent;
-  const factory InfiniteListEvent.addItems(List<T> items) = InfiniteListAddItemsEvent;
-  const factory InfiniteListEvent.insert(int idx, T item) = InfiniteListInsertEvent;
+  factory InfiniteListEvent.fetchNext() = InfiniteListFetchNextEvent;
+  factory InfiniteListEvent.reinitialize() = InfiniteListReinitializeEvent;
+  factory InfiniteListEvent.reset() = InfiniteListResetEvent;
 
-  const factory InfiniteListEvent.remove(T item) = InfiniteListRemoveEvent;
-  const factory InfiniteListEvent.removeAt(int idx) = InfiniteListRemoveAtEvent;
+  factory InfiniteListEvent.addItem(T item) = InfiniteListAddItemEvent;
+  factory InfiniteListEvent.addItems(List<T> items) = InfiniteListAddItemsEvent;
+  factory InfiniteListEvent.insert(int idx, T item) = InfiniteListInsertEvent;
 
-  const factory InfiniteListEvent.replace(T before, T after) = InfiniteListReplaceEvent;
-  const factory InfiniteListEvent.replaceAt(int idx, T item) = InfiniteListReplaceAtEvent;
-  const factory InfiniteListEvent.replaceWhere(
+  factory InfiniteListEvent.remove(T item) = InfiniteListRemoveEvent;
+  factory InfiniteListEvent.removeAt(int idx) = InfiniteListRemoveAtEvent;
+
+  factory InfiniteListEvent.replace(T before, T after) =
+      InfiniteListReplaceEvent;
+  factory InfiniteListEvent.replaceAt(int idx, T item) =
+      InfiniteListReplaceAtEvent;
+  factory InfiniteListEvent.replaceWhere(
     bool Function(T) test,
     T Function(T element) willReplacedItemGenerator,
   ) = InfiniteListReplaceWhereEvent;
 }
 
 class InfiniteListItemRelatedEvent<T> extends InfiniteListEvent<T> {
-  const InfiniteListItemRelatedEvent();
+  InfiniteListItemRelatedEvent();
 }
 
 class InfiniteListFetchNextEvent<T> extends InfiniteListItemRelatedEvent<T> {
-  const InfiniteListFetchNextEvent();
+  InfiniteListFetchNextEvent();
 }
 
 class InfiniteListResetEvent<T> extends InfiniteListItemRelatedEvent<T> {
-  const InfiniteListResetEvent();
+  InfiniteListResetEvent();
 }
 
 class InfiniteListReinitializeEvent<T> extends InfiniteListItemRelatedEvent<T> {
-  const InfiniteListReinitializeEvent();
+  InfiniteListReinitializeEvent();
 }
 
 class InfiniteListReplaceEvent<T> extends InfiniteListItemRelatedEvent<T> {
+  InfiniteListReplaceEvent(this.before, this.after);
   final T before;
   final T after;
-
-  const InfiniteListReplaceEvent(this.before, this.after);
 }
 
 class InfiniteListReplaceAtEvent<T> extends InfiniteListItemRelatedEvent<T> {
+  InfiniteListReplaceAtEvent(this.idx, this.item);
   final int idx;
   final T item;
-
-  const InfiniteListReplaceAtEvent(this.idx, this.item);
 }
 
 class InfiniteListReplaceWhereEvent<T> extends InfiniteListItemRelatedEvent<T> {
+  InfiniteListReplaceWhereEvent(
+    this.test,
+    this.willReplacedItemGenerator,
+  );
   final bool Function(T) test;
   final T Function(T element) willReplacedItemGenerator;
-
-  const InfiniteListReplaceWhereEvent(this.test, this.willReplacedItemGenerator);
 }
 
 class InfiniteListAddItemEvent<T> extends InfiniteListItemRelatedEvent<T> {
+  InfiniteListAddItemEvent(this.item);
   final T item;
-
-  const InfiniteListAddItemEvent(this.item);
 }
 
 class InfiniteListAddItemsEvent<T> extends InfiniteListItemRelatedEvent<T> {
+  InfiniteListAddItemsEvent(this.items);
   final List<T> items;
-
-  const InfiniteListAddItemsEvent(this.items);
 }
 
 class InfiniteListInsertEvent<T> extends InfiniteListItemRelatedEvent<T> {
+  InfiniteListInsertEvent(this.idx, this.item);
   final int idx;
   final T item;
-  const InfiniteListInsertEvent(this.idx, this.item);
 }
 
 class InfiniteListRemoveEvent<T> extends InfiniteListItemRelatedEvent<T> {
+  InfiniteListRemoveEvent(this.item);
   final T item;
-
-  const InfiniteListRemoveEvent(this.item);
 }
 
 class InfiniteListRemoveAtEvent<T> extends InfiniteListItemRelatedEvent<T> {
+  InfiniteListRemoveAtEvent(this.idx);
   final int idx;
-
-  const InfiniteListRemoveAtEvent(this.idx);
 }

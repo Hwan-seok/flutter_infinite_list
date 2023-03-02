@@ -1,11 +1,13 @@
+import 'dart:async';
+
 import 'package:bloc/bloc.dart';
 import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:bloc_infinite_list/src/bloc/infinite_list_event.dart';
 import 'package:bloc_infinite_list/src/bloc/infinite_list_state.dart';
 import 'package:bloc_infinite_list/src/bloc_base/mutable.dart';
 import 'package:bloc_infinite_list/src/bloc_base/queryable.dart';
+import 'package:bloc_infinite_list/src/core/completable.dart';
 import 'package:bloc_infinite_list/src/core/types.dart';
-import 'package:meta/meta.dart';
 
 abstract class InfiniteListBloc<
         ElementType,
@@ -51,135 +53,169 @@ abstract class InfiniteListBloc<
 
   // -------------------------------------------------- Methods
 
-  @override
-  @visibleForTesting
-  void addItem(ElementType item, {Emitter<State>? emitter}) =>
-      super.addItem(item, emitter: emitter);
+  Future<void> triggerAdd(ElementType item) {
+    final event = InfiniteListAddItemEvent(item);
+    add(event);
+    return event.completed;
+  }
 
-  @override
-  @visibleForTesting
-  void addItems(Iterable<ElementType> items, {Emitter<State>? emitter}) =>
-      super.addItems(items, emitter: emitter);
+  Future<void> triggerAddAll(List<ElementType> items) {
+    final event = InfiniteListAddItemsEvent(items);
+    add(event);
+    return event.completed;
+  }
 
-  @override
-  void replace(
-    ElementType before,
-    ElementType after, {
-    Emitter<State>? emitter,
-  }) =>
-      super.replace(before, after, emitter: emitter);
+  Future<void> triggerReplace(ElementType before, ElementType after) {
+    final event = InfiniteListReplaceEvent(before, after);
+    add(event);
+    return event.completed;
+  }
 
-  @override
-  @visibleForTesting
-  void replaceAt(int idx, ElementType item, {Emitter<State>? emitter}) =>
-      super.replaceAt(idx, item, emitter: emitter);
+  Future<void> triggerReplaceAt(int idx, ElementType item) {
+    final event = InfiniteListReplaceAtEvent(idx, item);
+    add(event);
+    return event.completed;
+  }
 
-  @override
-  @visibleForTesting
-  void replaceWhere(
-    bool Function(ElementType p1) test,
-    ElementType Function(ElementType element) willReplacedItemGenerator, {
-    Emitter<State>? emitter,
-  }) =>
-      super.replaceWhere(test, willReplacedItemGenerator, emitter: emitter);
+  Future<void> triggerReplaceWhere(
+    bool Function(ElementType item) test,
+    ElementType Function(ElementType element) itemGenerator,
+  ) {
+    final event = InfiniteListReplaceWhereEvent(test, itemGenerator);
+    add(event);
+    return event.completed;
+  }
 
-  @override
-  @visibleForTesting
-  void insert(int idx, ElementType item, {Emitter<State>? emitter}) =>
-      super.insert(idx, item, emitter: emitter);
+  Future<void> triggerInsert(int idx, ElementType item) {
+    final event = InfiniteListInsertEvent(idx, item);
+    add(event);
+    return event.completed;
+  }
 
-  @override
-  @visibleForTesting
-  void remove(ElementType item, {Emitter<State>? emitter}) =>
-      super.remove(item, emitter: emitter);
+  Future<void> triggerRemove(ElementType item) {
+    final event = InfiniteListRemoveEvent(item);
+    add(event);
+    return event.completed;
+  }
 
-  @override
-  @visibleForTesting
-  void removeAt(int idx, {Emitter<State>? emitter}) =>
-      super.removeAt(idx, emitter: emitter);
+  Future<void> triggerRemoveAt(int idx) {
+    final event = InfiniteListRemoveAtEvent<ElementType>(idx);
+    add(event);
+    return event.completed;
+  }
 
-  @override
-  @visibleForTesting
-  void reset({Emitter<State>? emitter}) => super.reset(emitter: emitter);
+  Future<void> triggerFetchNext() {
+    final event = InfiniteListFetchNextEvent<ElementType>();
+    add(event);
+    return event.completed;
+  }
 
-  @override
-  @visibleForTesting
-  Future<void> fetchNext({bool reset = false, Emitter<State>? emitter}) =>
-      super.fetchNext(reset: reset, emitter: emitter);
+  Future<void> triggerReset() {
+    final event = InfiniteListResetEvent<ElementType>();
+    add(event);
+    return event.completed;
+  }
 
-  @override
-  @visibleForTesting
-  Future<void> reinitialize({Emitter<State>? emitter}) =>
-      super.reinitialize(emitter: emitter);
+  Future<void> triggerReinitialize() {
+    final event = InfiniteListReinitializeEvent<ElementType>();
+    add(event);
+    return event.completed;
+  }
 
   void _addItem(
     InfiniteListAddItemEvent<ElementType> event,
     Emitter<State> emit,
   ) =>
-      super.addItem(event.item);
+      _wrapCompletable(event, () => addItem(event.item, emitter: emit));
 
   void _addItems(
     InfiniteListAddItemsEvent<ElementType> event,
     Emitter<State> emit,
   ) =>
-      super.addItems(event.items);
+      _wrapCompletable(event, () => addItems(event.items, emitter: emit));
 
   void _replace(
     InfiniteListReplaceEvent<ElementType> event,
     Emitter<State> emit,
   ) =>
-      super.replace(event.before, event.after, emitter: emit);
+      _wrapCompletable(
+        event,
+        () => replace(event.before, event.after, emitter: emit),
+      );
 
   void _replaceAt(
     InfiniteListReplaceAtEvent<ElementType> event,
     Emitter<State> emit,
   ) =>
-      super.replaceAt(event.idx, event.item, emitter: emit);
+      _wrapCompletable(
+        event,
+        () => replaceAt(event.idx, event.item, emitter: emit),
+      );
 
   void _replaceWhere(
     InfiniteListReplaceWhereEvent<ElementType> event,
     Emitter<State> emit,
   ) =>
-      super.replaceWhere(
-        event.test,
-        event.willReplacedItemGenerator,
-        emitter: emit,
+      _wrapCompletable(
+        event,
+        () => replaceWhere(
+          event.test,
+          event.willReplacedItemGenerator,
+          emitter: emit,
+        ),
       );
 
   void _insert(
     InfiniteListInsertEvent<ElementType> event,
     Emitter<State> emit,
   ) =>
-      super.insert(event.idx, event.item, emitter: emit);
+      _wrapCompletable(
+        event,
+        () => insert(event.idx, event.item, emitter: emit),
+      );
 
   void _remove(
     InfiniteListRemoveEvent<ElementType> event,
     Emitter<State> emit,
   ) =>
-      super.remove(event.item, emitter: emit);
+      _wrapCompletable(event, () => remove(event.item, emitter: emit));
 
   void _removeAt(
     InfiniteListRemoveAtEvent<ElementType> event,
     Emitter<State> emit,
   ) =>
-      super.removeAt(event.idx, emitter: emit);
+      _wrapCompletable(event, () => removeAt(event.idx, emitter: emit));
 
   Future<void> _fetchNext(
     InfiniteListFetchNextEvent<ElementType> event,
     Emitter<State> emit,
   ) =>
-      fetchNext(emitter: emit);
+      _wrapCompletable(event, () => fetchNext(emitter: emit));
 
   void _reset(
     InfiniteListResetEvent<ElementType> event,
     Emitter<State> emit,
   ) =>
-      super.reset(emitter: emit);
+      _wrapCompletable(event, () => reset(emitter: emit));
 
   Future<void> _reinitialize(
     InfiniteListReinitializeEvent<ElementType> event,
     Emitter<State> emit,
+  ) =>
+      _wrapCompletable(event, () => fetchNext(reset: true, emitter: emit));
+
+  Future<void> _wrapCompletable(
+    Completable completable,
+    FutureOr<void> Function() ops,
   ) async {
-    await fetchNext(reset: true, emitter: emit);
+    try {
+      final result = ops();
+      if (result is Future) await result;
+
+      completable.complete();
+    } catch (e, st) {
+      completable.completeError(e, st);
+      rethrow;
+    }
   }
 }
