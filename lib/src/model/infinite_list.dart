@@ -3,8 +3,12 @@ import 'package:bloc_infinite_list/src/model/slice.dart';
 import 'package:collection/collection.dart';
 import 'package:equatable/equatable.dart';
 
+/// Represents current status of the [InfiniteList]
 enum InfiniteListStatus {
+  /// [initial] indicates the initial status as itself.
   initial,
+
+  /// [initialLoading] is loading status at the first load.
   initialLoading,
   loaded,
   loading,
