@@ -20,6 +20,11 @@ class Slice<T> {
   ) =>
       _$SliceToJson(this, toJsonT);
 
+  Slice<R> map<R>(R Function(T element) mapper) => Slice<R>(
+        content.map(mapper).toList(),
+        last,
+      );
+
   final List<T> content;
   final bool last;
 
