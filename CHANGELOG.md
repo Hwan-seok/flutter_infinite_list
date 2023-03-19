@@ -1,3 +1,8 @@
+## 0.2.1
+
+- feat: Open mutable methods and add assertions
+- test: Add tests for bloc and cubits
+
 ## 0.2.0
 
 - test: Add test to slice mapper

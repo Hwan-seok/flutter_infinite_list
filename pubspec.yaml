@@ -1,6 +1,6 @@
 name: bloc_infinite_list
 description: Serves pre-made infinite list cubit and bloc to reduce boilerplate and provide concrete immutable bloc implementation. 
-version: 0.2.0
+version: 0.2.1
 homepage: https://github.com/Hwan-seok/flutter_infinite_list
 issue_tracker: https://github.com/Hwan-seok/flutter_infinite_list/issues
 
