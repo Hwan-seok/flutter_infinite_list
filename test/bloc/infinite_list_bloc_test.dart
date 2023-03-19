@@ -1,3 +1,5 @@
+// ignore_for_file: unnecessary_lambdas
+
 import 'dart:async';
 
 import 'package:bloc_infinite_list/bloc_infinite_list.dart';
@@ -223,5 +225,22 @@ void main() {
       await bloc.triggerReinitialize();
       expect(bloc.state.items, [0, 1, 2, 3, 4]);
     });
+  });
+
+  test('Any method cannot be used with', () {
+    final bloc = setBloc();
+    expect(() => bloc.addItem(1), throwsA(isA<AssertionError>()));
+    expect(() => bloc.addItems([1]), throwsA(isA<AssertionError>()));
+    expect(() => bloc.replace(1, 2), throwsA(isA<AssertionError>()));
+    expect(() => bloc.replaceAt(1, 2), throwsA(isA<AssertionError>()));
+    expect(
+      () => bloc.replaceWhere((p0) => true, (element) => element),
+      throwsA(isA<AssertionError>()),
+    );
+    expect(() => bloc.insert(1, 2), throwsA(isA<AssertionError>()));
+    expect(() => bloc.remove(1), throwsA(isA<AssertionError>()));
+    expect(() => bloc.removeAt(1), throwsA(isA<AssertionError>()));
+    expect(() => bloc.fetchNext(), throwsA(isA<AssertionError>()));
+    expect(() => bloc.reinitialize(), throwsA(isA<AssertionError>()));
   });
 }

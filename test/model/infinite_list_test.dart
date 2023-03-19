@@ -6,8 +6,7 @@ void main() {
     const list = InfiniteList<int>(items: [1, 2, 3]);
 
     expect(list.itemCount, 3);
-    list.addItem(6);
-    expect(list.itemCount, 4);
+    expect(list.addItem(6).itemCount, 4);
   });
 
   test('isEmpty', () {
