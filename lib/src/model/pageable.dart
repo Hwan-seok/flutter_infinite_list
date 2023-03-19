@@ -24,4 +24,7 @@ class Pageable<T> extends Slice<T> {
       _$PageableToJson(this, toJsonT);
 
   final int totalElements;
+
+  @override
+  List<Object?> get props => [content, last, totalElements];
 }

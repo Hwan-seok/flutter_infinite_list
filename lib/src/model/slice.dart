@@ -1,9 +1,10 @@
+import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'slice.g.dart';
 
 @JsonSerializable(genericArgumentFactories: true)
-class Slice<T> {
+class Slice<T> extends Equatable {
   const Slice(
     this.content,
     this.last,
@@ -31,4 +32,7 @@ class Slice<T> {
   bool get isEmpty => content.isEmpty;
   bool get isNotEmpty => content.isNotEmpty;
   bool get hasNext => !last;
+
+  @override
+  List<Object?> get props => [content, last];
 }
