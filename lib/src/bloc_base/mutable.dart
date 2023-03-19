@@ -31,7 +31,7 @@ mixin InfiniteListMutable<ElementType,
   void registerFetch(PagedSliceFetcher<ElementType, State>? fetch) =>
       this.fetch = fetch;
 
-  @internal
+  @protected
   void registerLimit(int limit) => this.limit = limit;
 
   void cancelRequest() => cancelToken?.cancel();
