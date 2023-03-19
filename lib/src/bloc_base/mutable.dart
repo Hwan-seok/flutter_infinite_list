@@ -36,8 +36,11 @@ mixin InfiniteListMutable<ElementType,
 
   void cancelRequest() => cancelToken?.cancel();
 
-  @internal
   void addItem(ElementType item, {Emitter<State>? emitter}) {
+    assert(
+      this is Cubit || (this is Bloc && emitter != null),
+      'You should not use this directly with Bloc. Use triggerAdd() instead.',
+    );
     final emitCall = emitter?.call ?? emit;
     emitCall(
       state.copyWith(
@@ -46,8 +49,11 @@ mixin InfiniteListMutable<ElementType,
     );
   }
 
-  @internal
   void addItems(Iterable<ElementType> items, {Emitter<State>? emitter}) {
+    assert(
+      this is Cubit || (this is Bloc && emitter != null),
+      'You should not use this directly with Bloc. Use triggerAddAll() instead.',
+    );
     final emitCall = emitter?.call ?? emit;
     emitCall(
       state.copyWith(
@@ -56,12 +62,15 @@ mixin InfiniteListMutable<ElementType,
     );
   }
 
-  @internal
   void replace(
     ElementType before,
     ElementType after, {
     Emitter<State>? emitter,
   }) {
+    assert(
+      this is Cubit || (this is Bloc && emitter != null),
+      'You should not use this directly with Bloc. Use triggerReplace() instead.',
+    );
     final emitCall = emitter?.call ?? emit;
     emitCall(
       state.copyWith(
@@ -70,8 +79,11 @@ mixin InfiniteListMutable<ElementType,
     );
   }
 
-  @internal
   void replaceAt(int idx, ElementType item, {Emitter<State>? emitter}) {
+    assert(
+      this is Cubit || (this is Bloc && emitter != null),
+      'You should not use this directly with Bloc. Use triggerReplaceAt() instead.',
+    );
     final emitCall = emitter?.call ?? emit;
     emitCall(
       state.copyWith(
@@ -80,12 +92,15 @@ mixin InfiniteListMutable<ElementType,
     );
   }
 
-  @internal
   void replaceWhere(
     bool Function(ElementType) test,
     ElementType Function(ElementType element) willReplacedItemGenerator, {
     Emitter<State>? emitter,
   }) {
+    assert(
+      this is Cubit || (this is Bloc && emitter != null),
+      'You should not use this directly with Bloc. Use triggerReplaceWhere() instead.',
+    );
     final emitCall = emitter?.call ?? emit;
     emitCall(
       state.copyWith(
@@ -94,8 +109,11 @@ mixin InfiniteListMutable<ElementType,
     );
   }
 
-  @internal
   void insert(int idx, ElementType item, {Emitter<State>? emitter}) {
+    assert(
+      this is Cubit || (this is Bloc && emitter != null),
+      'You should not use this directly with Bloc. Use triggerInsert() instead.',
+    );
     final emitCall = emitter?.call ?? emit;
     emitCall(
       state.copyWith(
@@ -104,8 +122,11 @@ mixin InfiniteListMutable<ElementType,
     );
   }
 
-  @internal
   void remove(ElementType item, {Emitter<State>? emitter}) {
+    assert(
+      this is Cubit || (this is Bloc && emitter != null),
+      'You should not use this directly with Bloc. Use triggerRemove() instead.',
+    );
     final emitCall = emitter?.call ?? emit;
     emitCall(
       state.copyWith(
@@ -114,8 +135,11 @@ mixin InfiniteListMutable<ElementType,
     );
   }
 
-  @internal
   void removeAt(int idx, {Emitter<State>? emitter}) {
+    assert(
+      this is Cubit || (this is Bloc && emitter != null),
+      'You should not use this directly with Bloc. Use triggerRemoveAt() instead.',
+    );
     final emitCall = emitter?.call ?? emit;
     emitCall(
       state.copyWith(
@@ -124,8 +148,11 @@ mixin InfiniteListMutable<ElementType,
     );
   }
 
-  @internal
   void reset({Emitter<State>? emitter}) {
+    assert(
+      this is Cubit || (this is Bloc && emitter != null),
+      'You should not use this directly with Bloc. Use triggerReset() instead.',
+    );
     final emitCall = emitter?.call ?? emit;
     cancelRequest();
     emitCall(
@@ -135,8 +162,11 @@ mixin InfiniteListMutable<ElementType,
     );
   }
 
-  @internal
   Future<void> fetchNext({bool reset = false, Emitter<State>? emitter}) async {
+    assert(
+      this is Cubit || (this is Bloc && emitter != null),
+      'You should not use this directly with Bloc. Use triggerFetchNext() instead.',
+    );
     final emitCall = emitter?.call ?? emit;
 
     if (state.infList.isFetchNotNeeded && !reset) return;
@@ -175,8 +205,11 @@ mixin InfiniteListMutable<ElementType,
     }
   }
 
-  @internal
   Future<void> reinitialize({Emitter<State>? emitter}) async {
+    assert(
+      this is Cubit || (this is Bloc && emitter != null),
+      'You should not use this directly with Bloc. Use triggerReinitialize() instead.',
+    );
     await fetchNext(reset: true, emitter: emitter);
   }
 }
