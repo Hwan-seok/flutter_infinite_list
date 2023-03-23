@@ -1,3 +1,7 @@
+## 0.3.0
+
+- chore(deps): Bump dio version to ^5
+
 ## 0.2.1
 
 - feat: Open mutable methods and add assertions
