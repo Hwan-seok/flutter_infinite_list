@@ -3,6 +3,8 @@ import 'package:dio/dio.dart';
 import 'package:fake_async/fake_async.dart';
 import 'package:test/test.dart';
 
+import '../helpers/custom_state.dart';
+
 Future<Slice<int>> _fetch<State>(
   int page,
   int limit,
@@ -16,8 +18,8 @@ Future<Slice<int>> _fetch<State>(
   );
 }
 
-class CustomInfiniteListBloc extends InfiniteListCubit<int, CustomState> {
-  CustomInfiniteListBloc()
+class CustomInfiniteListCubit extends InfiniteListCubit<int, CustomState> {
+  CustomInfiniteListCubit()
       : super(
           fetch: _fetch,
           initialState: CustomState(
@@ -27,32 +29,11 @@ class CustomInfiniteListBloc extends InfiniteListCubit<int, CustomState> {
         );
 }
 
-class CustomState extends InfiniteListState<int, CustomState> {
-  final String value;
-
-  CustomState({
-    required super.infList,
-    required this.value,
-  });
-
-  @override
-  CustomState copyWith({
-    InfiniteList<int>? infList,
-    String? value,
-  }) =>
-      CustomState(
-        infList: infList ?? this.infList,
-        value: value ?? this.value,
-      );
-  @override
-  List<Object?> get props => [infList, value];
-}
-
 void main() {
-  late CustomInfiniteListBloc bloc;
+  late CustomInfiniteListCubit bloc;
 
-  CustomInfiniteListBloc setBloc() =>
-      bloc = CustomInfiniteListBloc()..registerLimit(5);
+  CustomInfiniteListCubit setBloc() =>
+      bloc = CustomInfiniteListCubit()..registerLimit(5);
 
   setUp(setBloc);
 
