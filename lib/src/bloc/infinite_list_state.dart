@@ -53,8 +53,9 @@ abstract class DefaultMultiInfiniteListState<KT, T>
   DefaultMultiInfiniteListState({required super.keysToInfLists});
 
   @override
-  DefaultMultiInfiniteListState<KT, T> copyWith(
-      {Map<KT, InfiniteList<T>>? keysToInfLists});
+  DefaultMultiInfiniteListState<KT, T> copyWith({
+    Map<KT, InfiniteList<T>>? keysToInfLists,
+  });
 }
 
 class DefaultInfiniteListState<T>
