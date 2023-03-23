@@ -3,11 +3,11 @@ import 'package:dio/dio.dart';
 import 'package:fake_async/fake_async.dart';
 import 'package:test/test.dart';
 
-Future<Slice<int>> _fetch(
+Future<Slice<int>> _fetch<State>(
   int page,
   int limit,
   CancelToken? cancelToken,
-  DefaultInfiniteListState<int> state,
+  State state,
 ) async {
   await Future.delayed(const Duration(seconds: 1));
   return Slice(
@@ -16,135 +16,181 @@ Future<Slice<int>> _fetch(
   );
 }
 
-class MyInfiniteListBloc extends DefaultInfiniteListCubit<int> {
-  MyInfiniteListBloc()
+class CustomInfiniteListBloc extends InfiniteListCubit<int, CustomState> {
+  CustomInfiniteListBloc()
       : super(
           fetch: _fetch,
-          initialState: DefaultInfiniteListState(),
+          initialState: CustomState(
+            infList: const InfiniteList(),
+            value: '0',
+          ),
         );
 }
 
-void main() {
-  late MyInfiniteListBloc bloc;
+class CustomState extends InfiniteListState<int, CustomState> {
+  final String value;
 
-  MyInfiniteListBloc setBloc() => bloc = MyInfiniteListBloc()..registerLimit(5);
+  CustomState({
+    required super.infList,
+    required this.value,
+  });
+
+  @override
+  CustomState copyWith({
+    InfiniteList<int>? infList,
+    String? value,
+  }) =>
+      CustomState(
+        infList: infList ?? this.infList,
+        value: value ?? this.value,
+      );
+  @override
+  List<Object?> get props => [infList, value];
+}
+
+void main() {
+  late CustomInfiniteListBloc bloc;
+
+  CustomInfiniteListBloc setBloc() =>
+      bloc = CustomInfiniteListBloc()..registerLimit(5);
 
   setUp(setBloc);
 
+  CustomState incrementBatch(CustomState state) =>
+      state.copyWith(value: (int.parse(state.value) + 1).toString());
+
   group('add', () {
-    test('needs waiting for microtask to ensure ops to be completed', () async {
-      bloc.addItem(1);
+    test('runs fine with batch', () async {
+      bloc.addItem(1, batch: incrementBatch);
       expect(bloc.state.items, [1]);
+      expect(bloc.state.value, '1');
     });
   });
 
   group('addAll', () {
-    test('needs waiting for microtask to ensure ops to be completed', () async {
-      bloc.addItems([1, 2, 3]);
+    test('runs fine with batch', () async {
+      bloc.addItems([1, 2, 3], batch: incrementBatch);
       expect(bloc.state.items, [1, 2, 3]);
+      expect(bloc.state.value, '1');
     });
   });
 
   group('replace', () {
-    test('needs waiting for microtask to ensure ops to be completed', () async {
+    test('runs fine with batch', () async {
       bloc
         ..addItems([1, 2, 3])
-        ..replace(2, 4);
+        ..replace(2, 4, batch: incrementBatch);
       expect(bloc.state.items, [1, 4, 3]);
+      expect(bloc.state.value, '1');
     });
   });
 
   group('replaceAt', () {
-    test('needs waiting for microtask to ensure ops to be completed', () async {
+    test('runs fine with batch', () async {
       bloc
         ..addItems([1, 2, 3])
-        ..replaceAt(2, 4);
+        ..replaceAt(2, 4, batch: incrementBatch);
       expect(bloc.state.items, [1, 2, 4]);
+      expect(bloc.state.value, '1');
     });
   });
 
   group('replaceWhere', () {
-    test('needs waiting for microtask to ensure ops to be completed', () async {
+    test('runs fine with batch', () async {
       bloc
         ..addItems([1, 2, 3])
-        ..replaceWhere((item) => item == 1, (element) => 4);
+        ..replaceWhere(
+          (item) => item == 1,
+          (element) => 4,
+          batch: incrementBatch,
+        );
       expect(bloc.state.items, [4, 2, 3]);
+      expect(bloc.state.value, '1');
     });
   });
 
   group('insert', () {
-    test('needs waiting for microtask to ensure ops to be completed', () async {
+    test('runs fine with batch', () async {
       bloc
         ..addItems([1, 2, 3])
-        ..insert(1, 4);
+        ..insert(1, 4, batch: incrementBatch);
       expect(bloc.state.items, [1, 4, 2, 3]);
+      expect(bloc.state.value, '1');
     });
   });
 
   group('remove', () {
-    test('needs waiting for microtask to ensure ops to be completed', () async {
+    test('runs fine with batch', () async {
       bloc
         ..addItems([1, 2, 3])
-        ..remove(1);
+        ..remove(1, batch: incrementBatch);
       expect(bloc.state.items, [2, 3]);
+      expect(bloc.state.value, '1');
     });
   });
 
   group('removeAt', () {
-    test('needs waiting for microtask to ensure ops to be completed', () async {
+    test('runs fine with batch', () async {
       bloc
         ..addItems([1, 2, 3])
-        ..removeAt(1);
+        ..removeAt(1, batch: incrementBatch);
       expect(bloc.state.items, [1, 3]);
+      expect(bloc.state.value, '1');
     });
   });
 
   group('fetchNext', () {
-    test('needs waiting for microtask to ensure ops to be completed', () {
+    test('runs fine with batch', () {
       fakeAsync((async) {
         // Bloc should be set within the fakeAsync bloc because
         // FakeAsync is internally uses a zone and it affects only in the callback closure but not in [setup]
-        bloc = setBloc()..fetchNext();
+        bloc = setBloc()..fetchNext(batch: incrementBatch);
         expect(bloc.state.items, []);
+
         async.elapse(const Duration(seconds: 5));
 
         expect(bloc.state.items, [0, 1, 2, 3, 4]);
+        expect(bloc.state.value, '1');
       });
     });
 
     test('can be awaited', () async {
-      await bloc.fetchNext();
+      await bloc.fetchNext(batch: incrementBatch);
       expect(bloc.state.items, [0, 1, 2, 3, 4]);
+      expect(bloc.state.value, '1');
     });
   });
 
   group('reset', () {
-    test('needs waiting for microtask to ensure ops to be completed', () async {
+    test('runs fine with batch', () async {
       bloc
         ..addItems([1, 2, 3])
-        ..reset();
+        ..reset(batch: incrementBatch);
       expect(bloc.state.items, []);
+      expect(bloc.state.value, '1');
     });
   });
 
   group('reinitialize', () {
-    test('needs waiting for microtask to ensure ops to be completed', () {
+    test('runs fine with batch', () {
       fakeAsync((async) {
         bloc = setBloc()
           ..addItems([5, 6, 7])
-          ..reinitialize();
+          ..reinitialize(batch: incrementBatch);
         expect(bloc.state.items, [5, 6, 7]);
 
         async.elapse(const Duration(seconds: 5));
         expect(bloc.state.items, [0, 1, 2, 3, 4]);
+        expect(bloc.state.value, '1');
       });
     });
 
     test('can be awaited', () async {
       bloc.addItems([5, 6, 7]);
 
-      await bloc.reinitialize();
+      await bloc.reinitialize(batch: incrementBatch);
       expect(bloc.state.items, [0, 1, 2, 3, 4]);
+      expect(bloc.state.value, '1');
     });
   });
 }
