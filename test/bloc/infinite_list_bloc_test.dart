@@ -7,11 +7,14 @@ import 'package:dio/dio.dart';
 import 'package:fake_async/fake_async.dart';
 import 'package:test/test.dart';
 
-Future<Slice<int>> _fetch(
+import '../helpers/custom_event.dart';
+import '../helpers/custom_state.dart';
+
+Future<Slice<int>> _fetch<State>(
   int page,
   int limit,
   CancelToken? cancelToken,
-  DefaultInfiniteListState<int> state,
+  State state,
 ) async {
   await Future.delayed(const Duration(seconds: 1));
   return Slice(
@@ -20,46 +23,60 @@ Future<Slice<int>> _fetch(
   );
 }
 
-class MyInfiniteListBloc extends DefaultInfiniteListBloc<int> {
-  MyInfiniteListBloc()
+class CustomInfiniteListBloc
+    extends InfiniteListBloc<int, CustomEvent, CustomState> {
+  CustomInfiniteListBloc()
       : super(
           fetch: _fetch,
-          initialState: DefaultInfiniteListState(),
+          initialState: CustomState(
+            infList: const InfiniteList(),
+            value: '0',
+          ),
         );
 }
 
 void main() {
-  late MyInfiniteListBloc bloc;
+  late CustomInfiniteListBloc bloc;
 
-  MyInfiniteListBloc setBloc() => bloc = MyInfiniteListBloc()..registerLimit(5);
+  CustomInfiniteListBloc setBloc() =>
+      bloc = CustomInfiniteListBloc()..registerLimit(5);
 
   setUp(setBloc);
 
+  CustomState incrementBatch(CustomState state) =>
+      state.copyWith(value: (int.parse(state.value) + 1).toString());
+
   group('add', () {
     test('needs waiting for microtask to ensure ops to be completed', () async {
-      unawaited(bloc.triggerAdd(1));
-      expect(bloc.state.items, []);
+      unawaited(bloc.triggerAdd(1, batch: incrementBatch));
+
+      expect(bloc.state.items, <int>[]);
       await Future.microtask(() => null);
+
       expect(bloc.state.items, [1]);
+      expect(bloc.state.value, '1');
     });
 
     test('can be awaited', () async {
-      await bloc.triggerAdd(1);
+      await bloc.triggerAdd(1, batch: incrementBatch);
       expect(bloc.state.items, [1]);
+      expect(bloc.state.value, '1');
     });
   });
 
   group('addAll', () {
     test('needs waiting for microtask to ensure ops to be completed', () async {
-      unawaited(bloc.triggerAddAll([1, 2, 3]));
-      expect(bloc.state.items, []);
+      unawaited(bloc.triggerAddAll([1, 2, 3], batch: incrementBatch));
+      expect(bloc.state.items, <int>[]);
       await Future.microtask(() => null);
       expect(bloc.state.items, [1, 2, 3]);
+      expect(bloc.state.value, '1');
     });
 
     test('can be awaited', () async {
-      await bloc.triggerAddAll([1, 2, 3]);
+      await bloc.triggerAddAll([1, 2, 3], batch: incrementBatch);
       expect(bloc.state.items, [1, 2, 3]);
+      expect(bloc.state.value, '1');
     });
   });
 
@@ -67,16 +84,18 @@ void main() {
     test('needs waiting for microtask to ensure ops to be completed', () async {
       await bloc.triggerAddAll([1, 2, 3]);
 
-      unawaited(bloc.triggerReplace(2, 4));
+      unawaited(bloc.triggerReplace(2, 4, batch: incrementBatch));
       expect(bloc.state.items, [1, 2, 3]);
       await Future.microtask(() => null);
       expect(bloc.state.items, [1, 4, 3]);
+      expect(bloc.state.value, '1');
     });
 
     test('can be awaited', () async {
       await bloc.triggerAddAll([1, 2, 3]);
-      await bloc.triggerReplace(2, 4);
+      await bloc.triggerReplace(2, 4, batch: incrementBatch);
       expect(bloc.state.items, [1, 4, 3]);
+      expect(bloc.state.value, '1');
     });
   });
 
@@ -84,7 +103,7 @@ void main() {
     test('needs waiting for microtask to ensure ops to be completed', () async {
       await bloc.triggerAddAll([1, 2, 3]);
 
-      unawaited(bloc.triggerReplaceAt(2, 4));
+      unawaited(bloc.triggerReplaceAt(2, 4, batch: incrementBatch));
       expect(bloc.state.items, [1, 2, 3]);
       await Future.microtask(() => null);
       expect(bloc.state.items, [1, 2, 4]);
@@ -92,8 +111,9 @@ void main() {
 
     test('can be awaited', () async {
       await bloc.triggerAddAll([1, 2, 3]);
-      await bloc.triggerReplaceAt(2, 4);
+      await bloc.triggerReplaceAt(2, 4, batch: incrementBatch);
       expect(bloc.state.items, [1, 2, 4]);
+      expect(bloc.state.value, '1');
     });
   });
 
@@ -101,71 +121,90 @@ void main() {
     test('needs waiting for microtask to ensure ops to be completed', () async {
       await bloc.triggerAddAll([1, 2, 3]);
 
-      unawaited(bloc.triggerReplaceWhere((item) => item == 1, (element) => 4));
+      unawaited(
+        bloc.triggerReplaceWhere(
+          (item) => item == 1,
+          (element) => 4,
+          batch: incrementBatch,
+        ),
+      );
       expect(bloc.state.items, [1, 2, 3]);
       await Future.microtask(() => null);
       expect(bloc.state.items, [4, 2, 3]);
+      expect(bloc.state.value, '1');
     });
 
     test('can be awaited', () async {
       await bloc.triggerAddAll([1, 2, 3]);
 
-      await bloc.triggerReplaceWhere((item) => item == 1, (element) => 4);
+      await bloc.triggerReplaceWhere(
+        (item) => item == 1,
+        (element) => 4,
+        batch: incrementBatch,
+      );
       expect(bloc.state.items, [4, 2, 3]);
+      expect(bloc.state.value, '1');
     });
   });
 
   group('insert', () {
     test('needs waiting for microtask to ensure ops to be completed', () async {
-      await bloc.triggerAddAll([1, 2, 3]);
+      bloc.emit(CustomState.list([1, 2, 3]));
 
-      unawaited(bloc.triggerInsert(1, 4));
+      unawaited(bloc.triggerInsert(1, 4, batch: incrementBatch));
       expect(bloc.state.items, [1, 2, 3]);
       await Future.microtask(() => null);
       expect(bloc.state.items, [1, 4, 2, 3]);
+      expect(bloc.state.value, '1');
     });
 
     test('can be awaited', () async {
-      await bloc.triggerAddAll([1, 2, 3]);
+      bloc.emit(CustomState.list([1, 2, 3]));
 
-      await bloc.triggerInsert(1, 4);
+      await bloc.triggerInsert(1, 4, batch: incrementBatch);
       expect(bloc.state.items, [1, 4, 2, 3]);
+      expect(bloc.state.value, '1');
     });
   });
 
   group('remove', () {
     test('needs waiting for microtask to ensure ops to be completed', () async {
-      await bloc.triggerAddAll([1, 2, 3]);
+      bloc.emit(CustomState.list([1, 2, 3]));
 
-      unawaited(bloc.triggerRemove(1));
+      unawaited(bloc.triggerRemove(1, batch: incrementBatch));
       expect(bloc.state.items, [1, 2, 3]);
       await Future.microtask(() => null);
       expect(bloc.state.items, [2, 3]);
+      expect(bloc.state.value, '1');
     });
 
     test('can be awaited', () async {
-      await bloc.triggerAddAll([1, 2, 3]);
+      bloc.emit(CustomState.list([1, 2, 3]));
 
-      await bloc.triggerRemove(1);
+      await bloc.triggerRemove(1, batch: incrementBatch);
       expect(bloc.state.items, [2, 3]);
+      expect(bloc.state.value, '1');
     });
   });
 
   group('removeAt', () {
     test('needs waiting for microtask to ensure ops to be completed', () async {
-      await bloc.triggerAddAll([1, 2, 3]);
+      bloc.emit(CustomState.list([1, 2, 3]));
+      unawaited(bloc.triggerRemoveAt(1, batch: incrementBatch));
 
-      unawaited(bloc.triggerRemoveAt(1));
       expect(bloc.state.items, [1, 2, 3]);
       await Future.microtask(() => null);
+
       expect(bloc.state.items, [1, 3]);
+      expect(bloc.state.value, '1');
     });
 
     test('can be awaited', () async {
-      await bloc.triggerAddAll([1, 2, 3]);
+      bloc.emit(CustomState.list([1, 2, 3]));
 
-      await bloc.triggerRemoveAt(1);
+      await bloc.triggerRemoveAt(1, batch: incrementBatch);
       expect(bloc.state.items, [1, 3]);
+      expect(bloc.state.value, '1');
     });
   });
 
@@ -174,56 +213,62 @@ void main() {
       fakeAsync((async) {
         // Bloc should be set within the fakeAsync bloc because
         // FakeAsync is internally uses a zone and it affects only in the callback closure but not in [setup]
-        bloc = setBloc()..triggerFetchNext();
-        expect(bloc.state.items, []);
+        bloc = setBloc()..triggerFetchNext(batch: incrementBatch);
+        expect(bloc.state.items, <int>[]);
         async.elapse(const Duration(seconds: 5));
 
         expect(bloc.state.items, [0, 1, 2, 3, 4]);
+        expect(bloc.state.value, '1');
       });
     });
 
     test('can be awaited', () async {
-      await bloc.triggerFetchNext();
+      await bloc.triggerFetchNext(batch: incrementBatch);
       expect(bloc.state.items, [0, 1, 2, 3, 4]);
+      expect(bloc.state.value, '1');
     });
   });
 
   group('reset', () {
     test('needs waiting for microtask to ensure ops to be completed', () async {
-      await bloc.triggerAddAll([1, 2, 3]);
-      unawaited(bloc.triggerReset());
+      bloc.emit(CustomState.list([1, 2, 3]));
+      unawaited(bloc.triggerReset(batch: incrementBatch));
       expect(bloc.state.items, [1, 2, 3]);
       await Future.microtask(() => null);
-      expect(bloc.state.items, []);
+      expect(bloc.state.items, <int>[]);
+      expect(bloc.state.value, '1');
     });
 
     test('can be awaited', () async {
-      await bloc.triggerAddAll([1, 2, 3]);
+      bloc.emit(CustomState.list([1, 2, 3]));
 
-      await bloc.triggerReset();
-      expect(bloc.state.items, []);
+      await bloc.triggerReset(batch: incrementBatch);
+      expect(bloc.state.items, <int>[]);
+      expect(bloc.state.value, '1');
     });
   });
 
   group('reinitialize', () {
     test('needs waiting for microtask to ensure ops to be completed', () {
       fakeAsync((async) {
-        bloc = setBloc()..triggerAddAll([5, 6, 7]);
+        bloc = setBloc()..emit(CustomState.list([5, 6, 7]));
         async.flushMicrotasks();
 
-        bloc.triggerReinitialize();
+        bloc.triggerReinitialize(batch: incrementBatch);
         expect(bloc.state.items, [5, 6, 7]);
 
         async.elapse(const Duration(seconds: 5));
         expect(bloc.state.items, [0, 1, 2, 3, 4]);
+        expect(bloc.state.value, '1');
       });
     });
 
     test('can be awaited', () async {
-      await bloc.triggerAddAll([5, 6, 7]);
+      bloc.emit(CustomState.list([5, 6, 7]));
 
-      await bloc.triggerReinitialize();
+      await bloc.triggerReinitialize(batch: incrementBatch);
       expect(bloc.state.items, [0, 1, 2, 3, 4]);
+      expect(bloc.state.value, '1');
     });
   });
 

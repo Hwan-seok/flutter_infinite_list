@@ -23,17 +23,18 @@ enum InfiniteListStatus {
 }
 
 class InfiniteList<T> extends Equatable {
-  factory InfiniteList.fromSlice({
-    required Slice<T> slice,
-  }) =>
-      InfiniteList<T>().addSlice(slice);
-
   const InfiniteList({
     this.items = const [],
     this.shouldFetchPage = 0,
     this.status = InfiniteListStatus.initial,
     this.itemCountIncludeNotFetched,
   });
+
+  factory InfiniteList.fromSlice({
+    required Slice<T> slice,
+  }) =>
+      InfiniteList<T>().addSlice(slice);
+
   final List<T> items;
   final int shouldFetchPage;
 
