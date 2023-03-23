@@ -36,133 +36,171 @@ mixin InfiniteListMutable<ElementType,
 
   void cancelRequest() => cancelToken?.cancel();
 
-  void addItem(ElementType item, {Emitter<State>? emitter}) {
+  void addItem(
+    ElementType item, {
+    Emitter<State>? emitter,
+    State Function(State)? batch,
+  }) {
     assert(
       this is Cubit || (this is Bloc && emitter != null),
       'You should not use this directly with Bloc. Use triggerAdd() instead.',
     );
     final emitCall = emitter?.call ?? emit;
-    emitCall(
-      state.copyWith(
-        infList: state.infList.addItem(item),
-      ),
+
+    var newState = state.copyWith(
+      infList: state.infList.addItem(item),
     );
+
+    newState = batch?.call(newState) ?? newState;
+
+    emitCall(newState);
   }
 
-  void addItems(Iterable<ElementType> items, {Emitter<State>? emitter}) {
+  void addItems(
+    Iterable<ElementType> items, {
+    Emitter<State>? emitter,
+    State Function(State)? batch,
+  }) {
     assert(
       this is Cubit || (this is Bloc && emitter != null),
       'You should not use this directly with Bloc. Use triggerAddAll() instead.',
     );
     final emitCall = emitter?.call ?? emit;
-    emitCall(
-      state.copyWith(
-        infList: state.infList.addItems(items),
-      ),
+    var newState = state.copyWith(
+      infList: state.infList.addItems(items),
     );
+    newState = batch?.call(newState) ?? newState;
+    emitCall(newState);
   }
 
   void replace(
     ElementType before,
     ElementType after, {
     Emitter<State>? emitter,
+    State Function(State)? batch,
   }) {
     assert(
       this is Cubit || (this is Bloc && emitter != null),
       'You should not use this directly with Bloc. Use triggerReplace() instead.',
     );
     final emitCall = emitter?.call ?? emit;
-    emitCall(
-      state.copyWith(
-        infList: state.infList.replace(before, after),
-      ),
+    var newState = state.copyWith(
+      infList: state.infList.replace(before, after),
     );
+    newState = batch?.call(newState) ?? newState;
+    emitCall(newState);
   }
 
-  void replaceAt(int idx, ElementType item, {Emitter<State>? emitter}) {
+  void replaceAt(
+    int idx,
+    ElementType item, {
+    Emitter<State>? emitter,
+    State Function(State)? batch,
+  }) {
     assert(
       this is Cubit || (this is Bloc && emitter != null),
       'You should not use this directly with Bloc. Use triggerReplaceAt() instead.',
     );
     final emitCall = emitter?.call ?? emit;
-    emitCall(
-      state.copyWith(
-        infList: state.infList.replaceAt(idx, item),
-      ),
+    var newState = state.copyWith(
+      infList: state.infList.replaceAt(idx, item),
     );
+    newState = batch?.call(newState) ?? newState;
+    emitCall(newState);
   }
 
   void replaceWhere(
     bool Function(ElementType) test,
     ElementType Function(ElementType element) willReplacedItemGenerator, {
     Emitter<State>? emitter,
+    State Function(State)? batch,
   }) {
     assert(
       this is Cubit || (this is Bloc && emitter != null),
       'You should not use this directly with Bloc. Use triggerReplaceWhere() instead.',
     );
     final emitCall = emitter?.call ?? emit;
-    emitCall(
-      state.copyWith(
-        infList: state.infList.replaceWhere(test, willReplacedItemGenerator),
-      ),
+    var newState = state.copyWith(
+      infList: state.infList.replaceWhere(test, willReplacedItemGenerator),
     );
+    newState = batch?.call(newState) ?? newState;
+    emitCall(newState);
   }
 
-  void insert(int idx, ElementType item, {Emitter<State>? emitter}) {
+  void insert(
+    int idx,
+    ElementType item, {
+    Emitter<State>? emitter,
+    State Function(State)? batch,
+  }) {
     assert(
       this is Cubit || (this is Bloc && emitter != null),
       'You should not use this directly with Bloc. Use triggerInsert() instead.',
     );
     final emitCall = emitter?.call ?? emit;
-    emitCall(
-      state.copyWith(
-        infList: state.infList.insert(idx, item),
-      ),
+    var newState = state.copyWith(
+      infList: state.infList.insert(idx, item),
     );
+    newState = batch?.call(newState) ?? newState;
+    emitCall(newState);
   }
 
-  void remove(ElementType item, {Emitter<State>? emitter}) {
+  void remove(
+    ElementType item, {
+    Emitter<State>? emitter,
+    State Function(State)? batch,
+  }) {
     assert(
       this is Cubit || (this is Bloc && emitter != null),
       'You should not use this directly with Bloc. Use triggerRemove() instead.',
     );
     final emitCall = emitter?.call ?? emit;
-    emitCall(
-      state.copyWith(
-        infList: state.infList.remove(item),
-      ),
+    var newState = state.copyWith(
+      infList: state.infList.remove(item),
     );
+    newState = batch?.call(newState) ?? newState;
+    emitCall(newState);
   }
 
-  void removeAt(int idx, {Emitter<State>? emitter}) {
+  void removeAt(
+    int idx, {
+    Emitter<State>? emitter,
+    State Function(State)? batch,
+  }) {
     assert(
       this is Cubit || (this is Bloc && emitter != null),
       'You should not use this directly with Bloc. Use triggerRemoveAt() instead.',
     );
     final emitCall = emitter?.call ?? emit;
-    emitCall(
-      state.copyWith(
-        infList: state.infList.removeAt(idx),
-      ),
+    var newState = state.copyWith(
+      infList: state.infList.removeAt(idx),
     );
+    newState = batch?.call(newState) ?? newState;
+    emitCall(newState);
   }
 
-  void reset({Emitter<State>? emitter}) {
+  void reset({
+    Emitter<State>? emitter,
+    State Function(State)? batch,
+  }) {
     assert(
       this is Cubit || (this is Bloc && emitter != null),
       'You should not use this directly with Bloc. Use triggerReset() instead.',
     );
     final emitCall = emitter?.call ?? emit;
     cancelRequest();
-    emitCall(
-      state.copyWith(
-        infList: state.infList.reset(),
-      ),
+    var newState = state.copyWith(
+      infList: state.infList.reset(),
     );
+    newState = batch?.call(newState) ?? newState;
+    emitCall(newState);
   }
 
-  Future<void> fetchNext({bool reset = false, Emitter<State>? emitter}) async {
+  Future<void> fetchNext({
+    bool reset = false,
+    Emitter<State>? emitter,
+    State Function(State)? batch,
+  }) async {
     assert(
       this is Cubit || (this is Bloc && emitter != null),
       'You should not use this directly with Bloc. Use triggerFetchNext() instead.',
@@ -181,19 +219,14 @@ mixin InfiniteListMutable<ElementType,
         state,
       );
 
-      if (reset) {
-        emitCall(
-          state.copyWith(
-            infList: InfiniteList.fromSlice(slice: fetchedResult),
-          ),
-        );
-      } else {
-        emitCall(
-          state.copyWith(
-            infList: state.infList.addSlice(fetchedResult),
-          ),
-        );
-      }
+      var newState = state.copyWith(
+        infList: reset
+            ? InfiniteList.fromSlice(slice: fetchedResult)
+            : state.infList.addSlice(fetchedResult),
+      );
+
+      newState = batch?.call(newState) ?? newState;
+      emitCall(newState);
     } catch (e) {
       if (!isClosed) {
         emit(state.copyWith(infList: state.infList.copyToLoaded()));
@@ -205,11 +238,14 @@ mixin InfiniteListMutable<ElementType,
     }
   }
 
-  Future<void> reinitialize({Emitter<State>? emitter}) async {
+  Future<void> reinitialize({
+    Emitter<State>? emitter,
+    State Function(State)? batch,
+  }) async {
     assert(
       this is Cubit || (this is Bloc && emitter != null),
       'You should not use this directly with Bloc. Use triggerReinitialize() instead.',
     );
-    await fetchNext(reset: true, emitter: emitter);
+    await fetchNext(reset: true, emitter: emitter, batch: batch);
   }
 }
