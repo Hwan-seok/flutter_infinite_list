@@ -15,5 +15,7 @@ typedef PagedSliceFetcher<T, S> = Future<Slice<T>> Function(
 typedef DefaultInfiniteListCubit<T>
     = InfiniteListCubit<T, DefaultInfiniteListState<T>>;
 
-typedef DefaultInfiniteListBloc<T>
-    = InfiniteListBloc<T, InfiniteListEvent<T>, DefaultInfiniteListState<T>>;
+typedef DefaultInfiniteListBloc<T> = InfiniteListBloc<
+    T,
+    InfiniteListEvent<T, DefaultInfiniteListState<T>>,
+    DefaultInfiniteListState<T>>;

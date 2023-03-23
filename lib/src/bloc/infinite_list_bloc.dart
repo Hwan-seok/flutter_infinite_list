@@ -11,9 +11,9 @@ import 'package:bloc_infinite_list/src/core/types.dart';
 
 abstract class InfiniteListBloc<
         ElementType,
-        Event extends InfiniteListEvent<ElementType>,
+        Event extends InfiniteListEvent<ElementType, State>,
         State extends InfiniteListState<ElementType, State>>
-    extends Bloc<InfiniteListEvent<ElementType>, State>
+    extends Bloc<InfiniteListEvent<ElementType, State>, State>
     with
         InfiniteListQueryable<ElementType, State>,
         InfiniteListMutable<ElementType, State> {
@@ -29,131 +29,189 @@ abstract class InfiniteListBloc<
       registerLimit(limit);
     }
 
-    on<InfiniteListFetchNextEvent<ElementType>>(
+    on<InfiniteListFetchNextEvent<ElementType, State>>(
       _fetchNext,
       transformer: droppable(),
     );
-    on<InfiniteListReinitializeEvent<ElementType>>(
+    on<InfiniteListReinitializeEvent<ElementType, State>>(
       _reinitialize,
       transformer: droppable(),
     );
-    on<InfiniteListResetEvent<ElementType>>(_reset);
+    on<InfiniteListResetEvent<ElementType, State>>(_reset);
 
-    on<InfiniteListAddItemEvent<ElementType>>(_addItem);
-    on<InfiniteListAddItemsEvent<ElementType>>(_addItems);
-    on<InfiniteListInsertEvent<ElementType>>(_insert);
+    on<InfiniteListAddItemEvent<ElementType, State>>(_addItem);
+    on<InfiniteListAddItemsEvent<ElementType, State>>(_addItems);
+    on<InfiniteListInsertEvent<ElementType, State>>(_insert);
 
-    on<InfiniteListRemoveEvent<ElementType>>(_remove);
-    on<InfiniteListRemoveAtEvent<ElementType>>(_removeAt);
+    on<InfiniteListRemoveEvent<ElementType, State>>(_remove);
+    on<InfiniteListRemoveAtEvent<ElementType, State>>(_removeAt);
 
-    on<InfiniteListReplaceEvent<ElementType>>(_replace);
-    on<InfiniteListReplaceAtEvent<ElementType>>(_replaceAt);
-    on<InfiniteListReplaceWhereEvent<ElementType>>(_replaceWhere);
+    on<InfiniteListReplaceEvent<ElementType, State>>(_replace);
+    on<InfiniteListReplaceAtEvent<ElementType, State>>(_replaceAt);
+    on<InfiniteListReplaceWhereEvent<ElementType, State>>(_replaceWhere);
   }
 
   // -------------------------------------------------- Methods
 
-  Future<void> triggerAdd(ElementType item) {
-    final event = InfiniteListAddItemEvent(item);
+  Future<void> triggerAdd(
+    ElementType item, {
+    State Function(State)? batch,
+  }) {
+    final event =
+        InfiniteListAddItemEvent<ElementType, State>(item, batch: batch);
     add(event);
     return event.completed;
   }
 
-  Future<void> triggerAddAll(List<ElementType> items) {
-    final event = InfiniteListAddItemsEvent(items);
+  Future<void> triggerAddAll(
+    List<ElementType> items, {
+    State Function(State)? batch,
+  }) {
+    final event =
+        InfiniteListAddItemsEvent<ElementType, State>(items, batch: batch);
     add(event);
     return event.completed;
   }
 
-  Future<void> triggerReplace(ElementType before, ElementType after) {
-    final event = InfiniteListReplaceEvent(before, after);
+  Future<void> triggerReplace(
+    ElementType before,
+    ElementType after, {
+    State Function(State)? batch,
+  }) {
+    final event = InfiniteListReplaceEvent<ElementType, State>(
+      before,
+      after,
+      batch: batch,
+    );
     add(event);
     return event.completed;
   }
 
-  Future<void> triggerReplaceAt(int idx, ElementType item) {
-    final event = InfiniteListReplaceAtEvent(idx, item);
+  Future<void> triggerReplaceAt(
+    int idx,
+    ElementType item, {
+    State Function(State)? batch,
+  }) {
+    final event =
+        InfiniteListReplaceAtEvent<ElementType, State>(idx, item, batch: batch);
     add(event);
     return event.completed;
   }
 
   Future<void> triggerReplaceWhere(
     bool Function(ElementType item) test,
-    ElementType Function(ElementType element) itemGenerator,
-  ) {
-    final event = InfiniteListReplaceWhereEvent(test, itemGenerator);
+    ElementType Function(ElementType element) itemGenerator, {
+    State Function(State)? batch,
+  }) {
+    final event = InfiniteListReplaceWhereEvent<ElementType, State>(
+      test,
+      itemGenerator,
+      batch: batch,
+    );
     add(event);
     return event.completed;
   }
 
-  Future<void> triggerInsert(int idx, ElementType item) {
-    final event = InfiniteListInsertEvent(idx, item);
+  Future<void> triggerInsert(
+    int idx,
+    ElementType item, {
+    State Function(State)? batch,
+  }) {
+    final event =
+        InfiniteListInsertEvent<ElementType, State>(idx, item, batch: batch);
     add(event);
     return event.completed;
   }
 
-  Future<void> triggerRemove(ElementType item) {
-    final event = InfiniteListRemoveEvent(item);
+  Future<void> triggerRemove(
+    ElementType item, {
+    State Function(State)? batch,
+  }) {
+    final event =
+        InfiniteListRemoveEvent<ElementType, State>(item, batch: batch);
     add(event);
     return event.completed;
   }
 
-  Future<void> triggerRemoveAt(int idx) {
-    final event = InfiniteListRemoveAtEvent<ElementType>(idx);
+  Future<void> triggerRemoveAt(
+    int idx, {
+    State Function(State)? batch,
+  }) {
+    final event =
+        InfiniteListRemoveAtEvent<ElementType, State>(idx, batch: batch);
     add(event);
     return event.completed;
   }
 
-  Future<void> triggerFetchNext() {
-    final event = InfiniteListFetchNextEvent<ElementType>();
+  Future<void> triggerFetchNext({
+    State Function(State)? batch,
+  }) {
+    final event = InfiniteListFetchNextEvent<ElementType, State>(batch: batch);
     add(event);
     return event.completed;
   }
 
-  Future<void> triggerReset() {
-    final event = InfiniteListResetEvent<ElementType>();
+  Future<void> triggerReset({
+    State Function(State)? batch,
+  }) {
+    final event = InfiniteListResetEvent<ElementType, State>(batch: batch);
     add(event);
     return event.completed;
   }
 
-  Future<void> triggerReinitialize() {
-    final event = InfiniteListReinitializeEvent<ElementType>();
+  Future<void> triggerReinitialize({
+    State Function(State)? batch,
+  }) {
+    final event =
+        InfiniteListReinitializeEvent<ElementType, State>(batch: batch);
     add(event);
     return event.completed;
   }
 
   void _addItem(
-    InfiniteListAddItemEvent<ElementType> event,
-    Emitter<State> emit,
-  ) =>
-      _wrapCompletable(event, () => addItem(event.item, emitter: emit));
-
-  void _addItems(
-    InfiniteListAddItemsEvent<ElementType> event,
-    Emitter<State> emit,
-  ) =>
-      _wrapCompletable(event, () => addItems(event.items, emitter: emit));
-
-  void _replace(
-    InfiniteListReplaceEvent<ElementType> event,
+    InfiniteListAddItemEvent<ElementType, State> event,
     Emitter<State> emit,
   ) =>
       _wrapCompletable(
         event,
-        () => replace(event.before, event.after, emitter: emit),
+        () => addItem(event.item, emitter: emit, batch: event.batch),
+      );
+
+  void _addItems(
+    InfiniteListAddItemsEvent<ElementType, State> event,
+    Emitter<State> emit,
+  ) =>
+      _wrapCompletable(
+        event,
+        () => addItems(event.items, emitter: emit, batch: event.batch),
+      );
+
+  void _replace(
+    InfiniteListReplaceEvent<ElementType, State> event,
+    Emitter<State> emit,
+  ) =>
+      _wrapCompletable(
+        event,
+        () => replace(
+          event.before,
+          event.after,
+          emitter: emit,
+          batch: event.batch,
+        ),
       );
 
   void _replaceAt(
-    InfiniteListReplaceAtEvent<ElementType> event,
+    InfiniteListReplaceAtEvent<ElementType, State> event,
     Emitter<State> emit,
   ) =>
       _wrapCompletable(
         event,
-        () => replaceAt(event.idx, event.item, emitter: emit),
+        () =>
+            replaceAt(event.idx, event.item, emitter: emit, batch: event.batch),
       );
 
   void _replaceWhere(
-    InfiniteListReplaceWhereEvent<ElementType> event,
+    InfiniteListReplaceWhereEvent<ElementType, State> event,
     Emitter<State> emit,
   ) =>
       _wrapCompletable(
@@ -162,47 +220,60 @@ abstract class InfiniteListBloc<
           event.test,
           event.willReplacedItemGenerator,
           emitter: emit,
+          batch: event.batch,
         ),
       );
 
   void _insert(
-    InfiniteListInsertEvent<ElementType> event,
+    InfiniteListInsertEvent<ElementType, State> event,
     Emitter<State> emit,
   ) =>
       _wrapCompletable(
         event,
-        () => insert(event.idx, event.item, emitter: emit),
+        () => insert(event.idx, event.item, emitter: emit, batch: event.batch),
       );
 
   void _remove(
-    InfiniteListRemoveEvent<ElementType> event,
+    InfiniteListRemoveEvent<ElementType, State> event,
     Emitter<State> emit,
   ) =>
-      _wrapCompletable(event, () => remove(event.item, emitter: emit));
+      _wrapCompletable(
+        event,
+        () => remove(event.item, emitter: emit, batch: event.batch),
+      );
 
   void _removeAt(
-    InfiniteListRemoveAtEvent<ElementType> event,
+    InfiniteListRemoveAtEvent<ElementType, State> event,
     Emitter<State> emit,
   ) =>
-      _wrapCompletable(event, () => removeAt(event.idx, emitter: emit));
+      _wrapCompletable(
+        event,
+        () => removeAt(event.idx, emitter: emit, batch: event.batch),
+      );
 
   Future<void> _fetchNext(
-    InfiniteListFetchNextEvent<ElementType> event,
+    InfiniteListFetchNextEvent<ElementType, State> event,
     Emitter<State> emit,
   ) =>
-      _wrapCompletable(event, () => fetchNext(emitter: emit));
+      _wrapCompletable(
+        event,
+        () => fetchNext(emitter: emit, batch: event.batch),
+      );
 
   void _reset(
-    InfiniteListResetEvent<ElementType> event,
+    InfiniteListResetEvent<ElementType, State> event,
     Emitter<State> emit,
   ) =>
-      _wrapCompletable(event, () => reset(emitter: emit));
+      _wrapCompletable(event, () => reset(emitter: emit, batch: event.batch));
 
   Future<void> _reinitialize(
-    InfiniteListReinitializeEvent<ElementType> event,
+    InfiniteListReinitializeEvent<ElementType, State> event,
     Emitter<State> emit,
   ) =>
-      _wrapCompletable(event, () => fetchNext(reset: true, emitter: emit));
+      _wrapCompletable(
+        event,
+        () => fetchNext(reset: true, emitter: emit, batch: event.batch),
+      );
 
   Future<void> _wrapCompletable(
     Completable completable,

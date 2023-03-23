@@ -1,7 +1,9 @@
 import 'package:bloc_infinite_list/src/core/completable.dart';
 
-abstract class InfiniteListEvent<T> with Completable {
-  InfiniteListEvent();
+abstract class InfiniteListEvent<T, State> with Completable {
+  final State Function(State)? batch;
+
+  InfiniteListEvent({this.batch});
 
   factory InfiniteListEvent.fetchNext() = InfiniteListFetchNextEvent;
   factory InfiniteListEvent.reinitialize() = InfiniteListReinitializeEvent;
@@ -24,65 +26,88 @@ abstract class InfiniteListEvent<T> with Completable {
   ) = InfiniteListReplaceWhereEvent;
 }
 
-class InfiniteListItemRelatedEvent<T> extends InfiniteListEvent<T> {
-  InfiniteListItemRelatedEvent();
+class InfiniteListItemRelatedEvent<T, State>
+    extends InfiniteListEvent<T, State> {
+  InfiniteListItemRelatedEvent({super.batch});
 }
 
-class InfiniteListFetchNextEvent<T> extends InfiniteListItemRelatedEvent<T> {
-  InfiniteListFetchNextEvent();
+class InfiniteListFetchNextEvent<T, State>
+    extends InfiniteListItemRelatedEvent<T, State> {
+  InfiniteListFetchNextEvent({
+    super.batch,
+  });
 }
 
-class InfiniteListResetEvent<T> extends InfiniteListItemRelatedEvent<T> {
-  InfiniteListResetEvent();
+class InfiniteListResetEvent<T, State>
+    extends InfiniteListItemRelatedEvent<T, State> {
+  InfiniteListResetEvent({
+    super.batch,
+  });
 }
 
-class InfiniteListReinitializeEvent<T> extends InfiniteListItemRelatedEvent<T> {
-  InfiniteListReinitializeEvent();
+class InfiniteListReinitializeEvent<T, State>
+    extends InfiniteListItemRelatedEvent<T, State> {
+  InfiniteListReinitializeEvent({
+    super.batch,
+  });
 }
 
-class InfiniteListReplaceEvent<T> extends InfiniteListItemRelatedEvent<T> {
-  InfiniteListReplaceEvent(this.before, this.after);
+class InfiniteListReplaceEvent<T, State>
+    extends InfiniteListItemRelatedEvent<T, State> {
+  InfiniteListReplaceEvent(
+    this.before,
+    this.after, {
+    super.batch,
+  });
   final T before;
   final T after;
 }
 
-class InfiniteListReplaceAtEvent<T> extends InfiniteListItemRelatedEvent<T> {
-  InfiniteListReplaceAtEvent(this.idx, this.item);
+class InfiniteListReplaceAtEvent<T, State>
+    extends InfiniteListItemRelatedEvent<T, State> {
+  InfiniteListReplaceAtEvent(this.idx, this.item, {super.batch});
   final int idx;
   final T item;
 }
 
-class InfiniteListReplaceWhereEvent<T> extends InfiniteListItemRelatedEvent<T> {
+class InfiniteListReplaceWhereEvent<T, State>
+    extends InfiniteListItemRelatedEvent<T, State> {
   InfiniteListReplaceWhereEvent(
     this.test,
-    this.willReplacedItemGenerator,
-  );
+    this.willReplacedItemGenerator, {
+    super.batch,
+  });
   final bool Function(T) test;
   final T Function(T element) willReplacedItemGenerator;
 }
 
-class InfiniteListAddItemEvent<T> extends InfiniteListItemRelatedEvent<T> {
-  InfiniteListAddItemEvent(this.item);
+class InfiniteListAddItemEvent<T, State>
+    extends InfiniteListItemRelatedEvent<T, State> {
+  InfiniteListAddItemEvent(this.item, {super.batch});
   final T item;
 }
 
-class InfiniteListAddItemsEvent<T> extends InfiniteListItemRelatedEvent<T> {
-  InfiniteListAddItemsEvent(this.items);
+class InfiniteListAddItemsEvent<T, State>
+    extends InfiniteListItemRelatedEvent<T, State> {
+  InfiniteListAddItemsEvent(this.items, {super.batch});
   final List<T> items;
 }
 
-class InfiniteListInsertEvent<T> extends InfiniteListItemRelatedEvent<T> {
-  InfiniteListInsertEvent(this.idx, this.item);
+class InfiniteListInsertEvent<T, State>
+    extends InfiniteListItemRelatedEvent<T, State> {
+  InfiniteListInsertEvent(this.idx, this.item, {super.batch});
   final int idx;
   final T item;
 }
 
-class InfiniteListRemoveEvent<T> extends InfiniteListItemRelatedEvent<T> {
-  InfiniteListRemoveEvent(this.item);
+class InfiniteListRemoveEvent<T, State>
+    extends InfiniteListItemRelatedEvent<T, State> {
+  InfiniteListRemoveEvent(this.item, {super.batch});
   final T item;
 }
 
-class InfiniteListRemoveAtEvent<T> extends InfiniteListItemRelatedEvent<T> {
-  InfiniteListRemoveAtEvent(this.idx);
+class InfiniteListRemoveAtEvent<T, State>
+    extends InfiniteListItemRelatedEvent<T, State> {
+  InfiniteListRemoveAtEvent(this.idx, {super.batch});
   final int idx;
 }
