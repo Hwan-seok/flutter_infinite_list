@@ -1,3 +1,19 @@
+## 0.4.0
+
+- feat: Add convenience methods
+- feat: Add ability to emit additional state in the mutable methods
+- Breaking feat!: Return null when no item is found.
+```dart
+Methods that find index of the item are now return null if there is no finding item located in the list.
+
+The affecting methods are:
+
+indexOf()
+lastIndexOf()
+indexWhere()
+lastIndexWhere()
+```
+
 ## 0.3.0
 
 - chore(deps): Bump dio version to ^5
