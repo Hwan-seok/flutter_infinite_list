@@ -22,6 +22,8 @@ enum InfiniteListStatus {
   bool get isLoadCompleted => this == loadCompleted;
 }
 
+const _IDX_NOT_FOUND = -1;
+
 class InfiniteList<T> extends Equatable {
   const InfiniteList({
     this.items = const [],
@@ -70,19 +72,41 @@ class InfiniteList<T> extends Equatable {
 
   bool get isFetchNotNeeded => status.isLoadCompleted || status.isLoading;
 
-  int indexOf(T item) => items.indexOf(item);
+  int? indexOf(T item) {
+    final result = items.indexOf(item);
+    return result == _IDX_NOT_FOUND ? null : result;
+  }
 
-  int indexWhere(bool Function(T item) test) => items.indexWhere(test);
+  int? lastIndexOf(T item) {
+    final result = items.lastIndexOf(item);
+    return result == _IDX_NOT_FOUND ? null : result;
+  }
+
+  int? indexWhere(bool Function(T item) test) {
+    final result = items.indexWhere(test);
+    return result == _IDX_NOT_FOUND ? null : result;
+  }
+
+  int? lastIndexWhere(bool Function(T item) test) {
+    final result = items.lastIndexWhere(test);
+    return result == _IDX_NOT_FOUND ? null : result;
+  }
+
+  T? firstWhereOrNull(bool Function(T item) test) =>
+      items.firstWhereOrNull(test);
 
   Iterable<T> where(bool Function(T item) test) => items.where(test);
 
+  /// Port of `Iterable.singleWhereOrNull`.
   T? singleWhereOrNull(bool Function(T item) test) =>
       items.singleWhereOrNull(test);
 
   bool containsWhere(bool Function(T item) test) =>
-      singleWhereOrNull(test) != null;
+      firstWhereOrNull(test) != null;
 
   bool contains(T item) => items.contains(item);
+
+  Iterable<T> getRange(int start, int end) => items.getRange(start, end);
 
   /// ------------------------------------------ End Queries
 
