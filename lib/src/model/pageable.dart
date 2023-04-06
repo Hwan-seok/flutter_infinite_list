@@ -26,5 +26,12 @@ class Pageable<T> extends Slice<T> {
   final int totalElements;
 
   @override
+  Pageable<R> map<R>(R Function(T element) mapper) => Pageable<R>(
+        content.map(mapper).toList(),
+        last,
+        totalElements,
+      );
+
+  @override
   List<Object?> get props => [content, last, totalElements];
 }
