@@ -10,6 +10,10 @@ class Slice<T> extends Equatable {
     this.last,
   );
 
+  const Slice.empty()
+      : content = const [],
+        last = false;
+
   factory Slice.fromJson(
     Map<String, dynamic> json,
     T Function(Object? json) fromJsonT,
