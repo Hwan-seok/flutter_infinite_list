@@ -204,7 +204,7 @@ class InfiniteList<T> extends Equatable {
         ? ', itemCountIncludeNotFetched: $itemCountIncludeNotFetched'
         : '';
     final s =
-        'InfiniteList<T>{status: $status, items: $items, shouldFetchPage: $shouldFetchPage}$pageableProp';
+        'InfiniteList<$T>{status: $status, items: $items, shouldFetchPage: $shouldFetchPage}$pageableProp';
     return s;
   }
 }

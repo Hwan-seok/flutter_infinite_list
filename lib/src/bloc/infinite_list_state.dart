@@ -4,8 +4,9 @@ import 'package:equatable/equatable.dart';
 abstract class InfiniteListState<T, R> with EquatableMixin {
   final InfiniteList<T> infList;
 
-  InfiniteListState({InfiniteList<T>? infList})
-      : infList = infList ?? InfiniteList<T>();
+  const InfiniteListState({required this.infList});
+
+  InfiniteListState.empty() : infList = InfiniteList<T>();
 
   T operator [](int index) => infList.items[index];
 
@@ -60,11 +61,13 @@ abstract class DefaultMultiInfiniteListState<KT, T>
 
 class DefaultInfiniteListState<T>
     extends InfiniteListState<T, DefaultInfiniteListState<T>> {
-  DefaultInfiniteListState({super.infList});
+  const DefaultInfiniteListState({required super.infList});
+
+  DefaultInfiniteListState.empty() : super.empty();
 
   @override
   DefaultInfiniteListState<T> copyWith({InfiniteList<T>? infList}) {
-    return DefaultInfiniteListState(infList: infList);
+    return DefaultInfiniteListState(infList: infList ?? this.infList);
   }
 
   @override
