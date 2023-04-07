@@ -290,3 +290,21 @@ abstract class InfiniteListBloc<
     }
   }
 }
+
+class DefaultInfiniteListBloc<T> extends InfiniteListBloc<
+    T,
+    InfiniteListEvent<T, DefaultInfiniteListState<T>>,
+    DefaultInfiniteListState<T>> {
+  DefaultInfiniteListBloc({
+    required super.fetch,
+    required super.initialState,
+    super.limit,
+  });
+
+  DefaultInfiniteListBloc.empty({
+    required super.fetch,
+    super.limit,
+  }) : super(
+          initialState: DefaultInfiniteListState<T>.empty(),
+        );
+}

@@ -21,3 +21,19 @@ abstract class InfiniteListCubit<ElementType,
     }
   }
 }
+
+class DefaultInfiniteListCubit<T>
+    extends InfiniteListCubit<T, DefaultInfiniteListState<T>> {
+  DefaultInfiniteListCubit({
+    required super.fetch,
+    required super.initialState,
+    super.limit,
+  });
+
+  DefaultInfiniteListCubit.empty({
+    required super.fetch,
+    super.limit,
+  }) : super(
+          initialState: DefaultInfiniteListState<T>.empty(),
+        );
+}
