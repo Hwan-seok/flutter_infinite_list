@@ -1,3 +1,9 @@
+## 0.5.0
+
+- feat: Add empty constructor to DefaultInfiniteListBloc/Cubit
+- feat!: Add empty constructor to InfiniteList & DefaultInfiniteList
+- fix: reset() now itemCountIncludeNotFetched to be null, not 0
+
 ## 0.4.0
 
 - feat: Add convenience methods
