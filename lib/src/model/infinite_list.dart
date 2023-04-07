@@ -181,7 +181,7 @@ class InfiniteList<T> extends Equatable {
         items: [],
         status: InfiniteListStatus.initial,
         shouldFetchPage: 0,
-        itemCountIncludeNotFetched: () => 0,
+        itemCountIncludeNotFetched: () => null,
       );
 
   InfiniteList<T> addSlice(Slice<T> slice) => copyWith(
