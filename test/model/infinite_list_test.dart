@@ -25,9 +25,7 @@ void main() {
   test('addItems()', () {
     const list = InfiniteList<int>();
 
-    list.addItems([1, 2, 3, 4, 5]);
-
-    expect(list.removeAt(1).items, [1, 3]);
+    expect(list.addItems([1, 2, 3, 4, 5]).items, [1, 2, 3, 4, 5]);
   });
 
   group('reset()', () {
