@@ -3,6 +3,7 @@ import 'package:bloc_infinite_list/src/bloc/infinite_list_state.dart';
 import 'package:bloc_infinite_list/src/bloc_base/mutable.dart';
 import 'package:bloc_infinite_list/src/bloc_base/queryable.dart';
 import 'package:bloc_infinite_list/src/core/types.dart';
+import 'package:bloc_infinite_list/src/model/infinite_list.dart';
 
 abstract class InfiniteListCubit<ElementType,
         State extends InfiniteListState<ElementType, State>>
@@ -20,4 +21,18 @@ abstract class InfiniteListCubit<ElementType,
       registerLimit(limit);
     }
   }
+}
+
+class DefaultInfiniteListCubit<T>
+    extends InfiniteListCubit<T, DefaultInfiniteListState<T>> {
+  DefaultInfiniteListCubit({
+    required super.fetch,
+    required super.initialState,
+  });
+
+  DefaultInfiniteListCubit.empty({
+    required super.fetch,
+  }) : super(
+          initialState: DefaultInfiniteListState<T>(infList: InfiniteList<T>()),
+        );
 }
