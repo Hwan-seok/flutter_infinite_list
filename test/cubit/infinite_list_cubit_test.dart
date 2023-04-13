@@ -1,5 +1,4 @@
 import 'package:bloc_infinite_list/bloc_infinite_list.dart';
-import 'package:dio/dio.dart';
 import 'package:fake_async/fake_async.dart';
 import 'package:test/test.dart';
 
@@ -8,9 +7,9 @@ import '../helpers/custom_state.dart';
 Future<Slice<int>> _fetch<State>(
   int page,
   int limit,
-  CancelToken? cancelToken,
-  State state,
-) async {
+  State state, [
+  dynamic cancelToken,
+]) async {
   await Future.delayed(const Duration(seconds: 1));
   return Slice(
     List.generate(limit, (index) => page * limit + index),
