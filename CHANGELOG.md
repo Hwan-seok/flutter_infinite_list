@@ -1,3 +1,9 @@
+## 0.6.0
+
+- docs: Write some docs for an InfiniteList
+- feat!: Remove dio from dependencies and replace CancelToken
+- chore(deps): Bump dependencies
+
 ## 0.5.0
 
 - feat: Add empty constructor to DefaultInfiniteListBloc/Cubit
