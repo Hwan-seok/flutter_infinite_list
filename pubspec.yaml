@@ -13,7 +13,6 @@ dependencies:
   bloc_concurrency: ^0.2.1
   collection: ^1.17.0
 
-  dio: ^5.1.1
   equatable: ^2.0.5
   json_annotation: ^4.8.0
   meta: ^1.9.1
