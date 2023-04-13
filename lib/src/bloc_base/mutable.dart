@@ -4,12 +4,11 @@ import 'package:bloc/bloc.dart';
 import 'package:bloc_infinite_list/src/bloc/infinite_list_state.dart';
 import 'package:bloc_infinite_list/src/core/types.dart';
 import 'package:bloc_infinite_list/src/model/infinite_list.dart';
-import 'package:dio/dio.dart';
 import 'package:meta/meta.dart';
 
 mixin InfiniteListMutable<ElementType,
     State extends InfiniteListState<ElementType, State>> on BlocBase<State> {
-  static CancelToken Function() createCancelToken = CancelToken.new;
+  static dynamic Function()? createCancelToken;
   static bool Function(Object e)? isErrorCanceled;
 
   @protected
@@ -19,7 +18,7 @@ mixin InfiniteListMutable<ElementType,
   PagedSliceFetcher<ElementType, State>? fetch;
 
   @internal
-  CancelToken? cancelToken;
+  dynamic cancelToken;
 
   @override
   Future<void> close() async {
@@ -209,14 +208,14 @@ mixin InfiniteListMutable<ElementType,
 
     if (state.infList.isFetchNotNeeded && !reset) return;
     emitCall(state.copyWith(infList: state.infList.copyToLoading()));
-    cancelToken = createCancelToken();
+    cancelToken = createCancelToken?.call();
 
     try {
       final fetchedResult = await fetch!.call(
         reset ? 0 : state.infList.shouldFetchPage,
         limit,
-        cancelToken,
         state,
+        cancelToken,
       );
 
       var newState = state.copyWith(
@@ -232,7 +231,7 @@ mixin InfiniteListMutable<ElementType,
         emit(state.copyWith(infList: state.infList.copyToLoaded()));
       }
       if (isErrorCanceled?.call(e) ?? false) {
-        log('InfiniteList just canceled fetching next content');
+        return log('InfiniteList just canceled fetching next content');
       }
       rethrow;
     }

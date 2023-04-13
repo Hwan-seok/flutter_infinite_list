@@ -6,7 +6,6 @@ import 'package:bloc_infinite_list/src/bloc_base/mutable.dart';
 import 'package:bloc_infinite_list/src/core/types.dart';
 import 'package:bloc_infinite_list/src/model/infinite_list.dart';
 import 'package:bloc_infinite_list/src/model/slice.dart';
-import 'package:dio/dio.dart';
 import 'package:meta/meta.dart';
 
 abstract class MultiInfiniteListCubit<KeyType, ElementType,
@@ -23,7 +22,7 @@ abstract class MultiInfiniteListCubit<KeyType, ElementType,
   final keyToLimits = <KeyType, int>{};
 
   @visibleForTesting
-  final keyToCancelTokens = <KeyType, CancelToken>{};
+  final keyToCancelTokens = <KeyType, dynamic>{};
 
   void registerFetch(
     KeyType key,
@@ -67,13 +66,13 @@ abstract class MultiInfiniteListCubit<KeyType, ElementType,
       assert(list != null, '[$key] list is missing');
       if (fetch == null || limit == null || list == null) return;
 
-      final cancelToken =
-          keyToCancelTokens[key] = InfiniteListMutable.createCancelToken();
+      final cancelToken = keyToCancelTokens[key] =
+          InfiniteListMutable.createCancelToken?.call();
       final fetchedResult = await fetch.call(
         list.shouldFetchPage,
         limit,
-        cancelToken,
         state,
+        cancelToken,
       );
       addSlice(key, fetchedResult);
     } catch (e) {
