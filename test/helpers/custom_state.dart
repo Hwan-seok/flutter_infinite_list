@@ -10,7 +10,11 @@ class CustomState extends InfiniteListState<int, CustomState> {
 
   CustomState.list(List<int> list)
       : value = '0',
-        super(infList: InfiniteList.fromSlice(slice: Slice(list, false)));
+        super(
+          infList: InfiniteList.fromSlice(
+            slice: Slice(items: list, didFetchedAll: false),
+          ),
+        );
 
   @override
   CustomState copyWith({

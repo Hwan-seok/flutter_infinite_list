@@ -224,7 +224,7 @@ class InfiniteList<T> extends Equatable {
       );
 
   InfiniteList<T> addSlice(Slice<T> slice) => copyWith(
-        items: [...items, ...slice.content],
+        items: [...items, ...slice.items],
         status: slice.hasNext
             ? InfiniteListStatus.loaded
             : InfiniteListStatus.loadCompleted,

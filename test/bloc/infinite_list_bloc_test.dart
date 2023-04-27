@@ -17,8 +17,8 @@ Future<Slice<int>> _fetch<State>(
 ]) async {
   await Future.delayed(const Duration(seconds: 1));
   return Slice(
-    List.generate(limit, (index) => page * limit + index),
-    false,
+    items: List.generate(limit, (index) => page * limit + index),
+    didFetchedAll: false,
   );
 }
 
