@@ -7,9 +7,9 @@ import '../helpers/custom_state.dart';
 Future<Slice<int>> _fetch<State>(
   int page,
   int limit,
-  State state, [
+  State state,
   dynamic cancelToken,
-]) async {
+) async {
   await Future.delayed(const Duration(seconds: 1));
   return Slice(
     items: List.generate(limit, (index) => page * limit + index),
