@@ -1,13 +1,10 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:bloc_concurrency/bloc_concurrency.dart';
-import 'package:bloc_infinite_list/src/bloc/infinite_list_event.dart';
-import 'package:bloc_infinite_list/src/bloc/infinite_list_state.dart';
-import 'package:bloc_infinite_list/src/bloc_base/mutable.dart';
-import 'package:bloc_infinite_list/src/bloc_base/queryable.dart';
+import 'package:bloc_infinite_list/bloc_infinite_list.dart';
 import 'package:bloc_infinite_list/src/core/completable.dart';
-import 'package:bloc_infinite_list/src/core/types.dart';
 
 abstract class InfiniteListBloc<
         ElementType,
@@ -291,6 +288,17 @@ abstract class InfiniteListBloc<
   }
 }
 
+/// This is a default implementation of [InfiniteListBloc].
+///
+/// If you are not having any other states but only list of items, you can use this class.
+///
+/// ```dart
+/// class MyBloc extends DefaultInfiniteListBloc<MyItem> {
+///  MyBloc(
+///
+///   ) : super(fetch: (offset, limit, cancelToken, state) => ;
+///
+///
 class DefaultInfiniteListBloc<T> extends InfiniteListBloc<
     T,
     InfiniteListEvent<T, DefaultInfiniteListState<T>>,
