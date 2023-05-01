@@ -7,7 +7,10 @@ class AlarmDefaultInfiniteListBloc extends DefaultInfiniteListBloc<Alarm> {
     required AlarmRepository alarmRepository,
   }) : super(
           fetch: (page, size, state, cancelToken) async =>
-              alarmRepository.getAlarms(page: page, size: size),
+              alarmRepository.getAlarms(
+            page: page,
+            size: size,
+          ),
           initialState: const DefaultInfiniteListState(
             infList: InfiniteList(),
           ),
