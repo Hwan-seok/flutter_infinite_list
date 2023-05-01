@@ -40,7 +40,7 @@ class PlayerCubit extends DefaultInfiniteListCubit<Player> {
     PlayerRepository playerRepository,
   ) : super(
     initialState: DefaultInfiniteListState(),
-    fetch: (page, size, cancelToken, state) => 
+    fetch: (page, size, state, cancelToken) => 
                                   playerRepository.getAll(
                                     page: page,
                                     size: size,
@@ -68,7 +68,7 @@ class PlayerCubit extends InfiniteListCubit<Player, PlayerState> {
     PlayerRepository playerRepository,
   ) : super(
     initialState: DefaultInfiniteListState(),
-    fetch: (page, size, cancelToken, state) => 
+    fetch: (page, size, state, cancelToken) => 
                                   playerRepository.getAll(
                                     page: page,
                                     size: size,
