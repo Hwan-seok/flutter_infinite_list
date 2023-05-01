@@ -1,3 +1,4 @@
+import 'package:example/cubit/default_infinite_cubit/screen/infinite_cubit_alarm_page.dart';
 import 'package:example/cubit/infinite_cubit/screen/infinite_cubit_alarm_page.dart';
 import 'package:flutter/material.dart';
 
@@ -26,6 +27,10 @@ class AlarmPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,
           children: const [
+            Tile(
+              exampleName: 'default_infinite_cubit',
+              page: DefaultInfiniteCubitAlarmPage(),
+            ),
             Tile(
               exampleName: 'infinite_cubit',
               page: InfiniteCubitAlarmPage(),

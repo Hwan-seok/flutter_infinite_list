@@ -1,6 +1,6 @@
 import 'package:bloc_infinite_list/bloc_infinite_list.dart';
 import 'package:example/common/models/alarm.dart';
-import 'package:example/cubit/infinite_cubit/repositories/alarm_repository.dart';
+import 'package:example/common/repositories/alarm_repository.dart';
 
 class AlarmRepositoryImpl implements AlarmRepository {
   List<Alarm> _generateAlarms(int seed) => [
