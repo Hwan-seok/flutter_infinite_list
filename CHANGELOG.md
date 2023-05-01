@@ -1,3 +1,9 @@
+## 1.0.0
+- docs: Add motivation and usage section to the README
+- docs: Add examples
+- feat!: Change CancelToken to be required
+- feat: Remove unnecessary dependencies
+
 ## 0.6.0
 
 - docs: Write some docs for an InfiniteList

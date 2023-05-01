@@ -25,7 +25,7 @@ This repo contains basic example app in the [example](https://github.com/Hwan-se
 
 ```dart
 dependencies:
-  bloc_infinite_list: ^0.6.0
+  bloc_infinite_list: ^1.0.0
 ```
 
 
