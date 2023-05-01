@@ -1,3 +1,6 @@
+## pre
+- chore(deps): Remove json_annotation from the dependencies
+
 ## 1.0.0
 - docs: Add motivation and usage section to the README
 - docs: Add examples
