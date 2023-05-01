@@ -1,6 +1,6 @@
+import 'package:example/common/repositories/alarm_repository_impl.dart';
 import 'package:example/common/widgets/scroll_end_notifier.dart';
-import 'package:example/cubit/infinite_cubit/bloc/alarm_cubit.dart';
-import 'package:example/cubit/infinite_cubit/repositories/alarm_repository_impl.dart';
+import 'package:example/cubit/infinite_list_cubit/bloc/alarm_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -31,8 +31,12 @@ class _InfiniteCubitAlarmView extends StatelessWidget {
     final isLoading = context.select(
       (AlarmInfiniteCubit cubit) => cubit.state.isLoading,
     );
+    final anotherField = context.select(
+      (AlarmInfiniteCubit cubit) => cubit.state.anotherField,
+    );
 
     return Scaffold(
+      appBar: AppBar(title: Text("anotherField: $anotherField")),
       body: ScrollEndNotifier(
         onScrollEnd: () => context.read<AlarmInfiniteCubit>().fetchNext(),
         scrollable: ListView.builder(

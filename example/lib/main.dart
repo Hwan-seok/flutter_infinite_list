@@ -1,4 +1,7 @@
-import 'package:example/cubit/infinite_cubit/screen/infinite_cubit_alarm_page.dart';
+import 'package:example/bloc/default_infinite_list_bloc/screen/default_infinite_list_bloc_alarm_page.dart';
+import 'package:example/bloc/infinite_list_bloc/screen/infinite_list_bloc_alarm_page.dart';
+import 'package:example/cubit/default_infinite_list_cubit/screen/infinite_cubit_alarm_page.dart';
+import 'package:example/cubit/infinite_list_cubit/screen/infinite_cubit_alarm_page.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -27,8 +30,20 @@ class AlarmPage extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: const [
             Tile(
-              exampleName: 'infinite_cubit',
+              exampleName: 'default_infinite_list_cubit',
+              page: DefaultInfiniteCubitAlarmPage(),
+            ),
+            Tile(
+              exampleName: 'infinite_list_cubit',
               page: InfiniteCubitAlarmPage(),
+            ),
+            Tile(
+              exampleName: 'default_infinite_list_bloc',
+              page: DefaultInfiniteBlocAlarmPage(),
+            ),
+            Tile(
+              exampleName: 'infinite_list_bloc',
+              page: InfiniteBlocAlarmPage(),
             ),
           ],
         ),
