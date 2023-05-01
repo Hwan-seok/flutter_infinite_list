@@ -1,5 +1,36 @@
+# bloc_infinite_list
 
-# How to use
+# Motivation
+
+As a `flutter_bloc` user, you may have some experience about struggling with boilerplate especially to `list`.
+Various of apps are have infinite list scrolling features in their app.  Even though every applications are have different business requirements, infinite list from all of them are built by just three main points. 
+
+1. Having a list
+2. Query item(s) from the list
+3. Mutate item(s) from the list
+
+But we always build them manually from the scratch😂. This is incredibly time-consuming and wasting the time.
+Also, the methods you made every day could have some bugs if you don't thoroughly test them.
+
+To solve those annoying problems, **`bloc_infinite_list`** made a various features for you!
+
+> Tell your **PM** that the scrolling feature would be take intensive time and have your own time drinking coffee😎.
+
+
+## Examples
+This repo contains basic example app in the [example](https://github.com/Hwan-seok/flutter_infinite_list/tree/main/example) folder.
+
+
+## Installation
+
+```dart
+dependencies:
+  bloc_infinite_list: ^0.6.0
+```
+
+
+
+# Usage
 
 ## Cubit
 ### Default state
