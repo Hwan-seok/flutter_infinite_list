@@ -1,17 +1,15 @@
 import 'package:bloc_infinite_list/bloc_infinite_list.dart';
 import 'package:example/common/models/alarm.dart';
 import 'package:example/common/repositories/alarm_repository.dart';
-import 'package:example/cubit/infinite_cubit/bloc/alarm_state.dart';
 
-class AlarmInfiniteCubit extends InfiniteListCubit<Alarm, AlarmState> {
-  AlarmInfiniteCubit({
+class AlarmDefaultInfiniteListBloc extends DefaultInfiniteListBloc<Alarm> {
+  AlarmDefaultInfiniteListBloc({
     required AlarmRepository alarmRepository,
   }) : super(
           fetch: (page, size, state, cancelToken) async =>
               alarmRepository.getAlarms(page: page, size: size),
-          initialState: const AlarmState(
+          initialState: const DefaultInfiniteListState(
             infList: InfiniteList(),
-            anotherField: false,
           ),
         );
 }
