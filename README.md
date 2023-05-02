@@ -157,8 +157,9 @@ Those events are equivalent to the [comfortable methods](#comfortable-methods) o
 > Note: You should register handlers if you use custom events.
 > That would be mentioned at later.
 
+### Shortcuts
+
 Each events has its own helper method that delegates adding events to the bloc.
-All of them returns the `Future`, so you can ensure that the event processed successfully after awaiting it.
 
 
 ```dart
@@ -258,3 +259,53 @@ class FoodBloc extends InfiniteListBloc<Food, FoodEvent, FoodState> {
 add(InfiniteListEvent.fetchNext());
 add(FoodEventHadForLaunch());
 ```
+
+
+
+---
+## Additional features
+
+### Querying items from the list
+There are some query methods for InfiniteList as same as the `List`.
+You can find those in [here](https://github.com/Hwan-seok/flutter_infinite_list/blob/main/lib/src/bloc_base/queryable.dart)
+
+
+### Change the fetching size
+
+The size argument passed to the `fetch` is 10 by default. You can change this behavior by passing the `limit`
+when creating either `InfiniteListBloc` or `InfiniteListCubit`:
+```dart
+class MyBloc extends InfiniteListBloc<...> {
+  MyBloc() : super(limit: 30, ...);
+}
+```
+Additionally, you can change your size dynamically by `registerLimit(int size)` in your own bloc.
+```dart
+
+class MyBloc extends InfiniteListBloc<...> {
+  ...
+  Future<void> myFetchNext() async {
+    await fetchNext();
+    if(state.itemCount > 30) registerLimit(100);
+  }
+}
+
+```
+
+### Await for Bloc event to be completed
+In some situation, you need to ensure the event is completed but that one is somewhat tricky.
+But don't worry, all [default methods for bloc](#comfortable-methods) return a `Future`, so you can
+ensure that the event processed successfully after awaiting it.
+
+```dart
+bloc.triggerAddItem(1); // equivalent to `bloc.add(InfiniteListEvent.addItem(1))`
+bloc.contains(1); // returns false
+---
+await bloc.triggerAddItem(1);
+bloc.contains(1); // returns true
+---
+await bloc.triggerFetchNext();
+bloc.items // ensures items were added
+```
+
+
