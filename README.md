@@ -2,23 +2,27 @@
 
 # Motivation
 
-As a `flutter_bloc` user, you may have some experience about struggling with boilerplate especially to `list`.
-Various of apps are have infinite list scrolling features in their app.  Even though every applications are have different business requirements, infinite list from all of them are built by just three main points. 
+As a bloc user, you may have experienced struggles with boilerplate code, especially when dealing with lists. Various apps implement infinite list scrolling features. Although each app may have different business requirements, infinite lists are built using three main components:
+
 
 1. Having a list
-2. Query item(s) from the list
-3. Mutate item(s) from the list
+2. Querying item(s) from the list
+3. Mutating item(s) in the list
 
-But we always build them manually from the scratch😂. This is incredibly time-consuming and wasting the time.
-Also, the methods you made every day could have some bugs if you don't thoroughly test them.
+However, we often build these features manually from scratch, which can be time-consuming and error-prone. To address these issues, the bloc_infinite_list package provides a range of features to streamline the process.
 
-To solve those annoying problems, **`bloc_infinite_list`** made a various features for you!
 
-> Tell your **PM** that the scrolling feature would be take intensive time and have your own time drinking coffee😎.
+
+> Tell your PM that infinite scrolling features take time, but with this package, you'll finish quickly and sneak in coffee breaks. 😎
+
+
+
+
+
 
 
 ## Examples
-This repo contains basic example app in the [example](https://github.com/Hwan-seok/flutter_infinite_list/tree/main/example) folder.
+This repository includes a basic example app in the [example](https://github.com/Hwan-seok/flutter_infinite_list/tree/main/example) folder.
 
 
 ## Installation
@@ -32,8 +36,7 @@ dependencies:
 
 # Usage
 
-This package provides following Blocs to help you building infinite list bloc(cubit) easily.
-
+This package offers the following Blocs and Cubits to simplify building infinite list blocs (cubits):
 
 - Cubit
 
@@ -42,56 +45,56 @@ This package provides following Blocs to help you building infinite list bloc(cu
 3. **Multi**InfiniteListCubit
 
 - Bloc
+
 1. **Default**InfiniteListBloc
 2. InfiniteListBloc
 
 
 
 
-## Comfortable Methods
-You can use this from the **Cubit only**. If you use this at Bloc, you will get `Assertion Error`.
-In the bloc, instead, you should use `bloc.triggerXXX()`. It will be mentioned at the [`InfiniteListBloc` section](#InfiniteListBloc).
+## Convenient Methods
+
+These methods are available for **Cubit only**. Using them in Bloc will result in an Assertion Error. Instead, use bloc.triggerXXX() in Bloc, as detailed in the [`InfiniteListBloc` section](#InfiniteListBloc).
 
 ```dart
 /// Fetches next page.
 cubit.fetchNext();
 
-/// Fetches the first page and replace it with the current list.
-/// It is useful when you implement pull-to-refresh feature.
+/// Fetches the first page and replaces the current list.
+/// Useful for implementing pull-to-refresh features.
 cubit.reinitialize();
 
 /// Clears the current list.
-/// After this, your list is empty.
+/// The list will be empty after this operation.
 cubit.reset();
 
-/// Adds the [item] into the end of the list.
+/// Adds all [items] to the end of the list.
 cubit.addItem(T item);
 
-/// Add all [items] into the end of the list.
+/// Inserts the [item] at the specified [idx] in the list.
 cubit.addItems(List<T> items);
 
-/// Insert the [item] in the [idx] of the list.
-cubit.insert(int idx, T item)
+/// Inserts the [item] at the specified [idx] in the list.
+cubit.insert(int idx, T item);
 
-/// Remove the [item] from the list.
-cubit.remove(T item)
+/// Removes the [item] from the list.
+cubit.remove(T item);
 
-/// Remove the item at [idx].
-cubit.removeAt(int idx)
+/// Removes the item at the specified [idx].
+cubit.removeAt(int idx);
 
-/// Replace the [before] to [after].
-cubit.replace(T before, T after)
+/// Replaces the [before] item with the [after] item.
+cubit.replace(T before, T after);
 
-/// Replace the item at [idx] to [item]
-cubit.replaceAt(int idx, T item)
+/// Replaces the item at the specified [idx] with the [item].
+cubit.replaceAt(int idx, T item);
 
-/// Replace all items which passes the [test] into returned value of the [willReplacedItemGenerator].
-/// The [element] will be passed to [willReplacedItemGenerator] that passed the [test] of each item in the list.
+/// Replaces all items that pass the [test] with the returned value of the [willReplacedItemGenerator].
+/// The [element] that passed the [test] will be provided to the [willReplacedItemGenerator].
 cubit.replaceWhere(
   bool Function(T) test,
   T Function(T element) willReplacedItemGenerator,
-)
-
+);
 ```
 
 
@@ -111,7 +114,7 @@ class PlayerCubit extends DefaultInfiniteListCubit<Player> {
       initialState: DefaultInfiniteListState(
         infList: InfiniteList(),
       ),
-      // or you can just pass the empty default state.
+      // Alternatively, pass an empty default state.
       // initialState: DefaultInfiniteListState.empty() 
     );
 }
@@ -143,24 +146,20 @@ class PlayerCubit extends InfiniteListCubit<Player, PlayerState> {
       initialState: DefaultInfiniteListState(
         infList: InfiniteList(),
       ),
-      // or you can just pass the empty default state.
+      // Alternatively, pass an empty default state.
       // initialState: DefaultInfiniteListState.empty() 
     );
 }
 ```
-
 ## InfiniteListBloc
 
-InfiniteListBloc has some built-in events. You can use it by default without registering event handler by `on(...)`.
-Those events are equivalent to the [comfortable methods](#comfortable-methods) of the `InfiniteListCubit`.
+InfiniteListBloc includes built-in events that can be used by default without registering event handlers using `on(...)`. These events correspond to the [convenient methods](#convenient-methods) of `InfiniteListCubit`.
 
-> Note: You should register handlers if you use custom events.
-> That would be mentioned at later.
+> Note: You should register handlers if you use custom events. This will be explained later.
 
 ### Shortcuts
 
-Each events has its own helper method that delegates adding events to the bloc.
-
+Each event has a helper method that delegates event addition to the bloc.
 
 ```dart
 bloc.add(InfiniteListEvent.fetchNext());
@@ -212,7 +211,6 @@ bloc.add(
 );
 = bloc.triggerReplaceAt(...);
 
-
 bloc.add(
   InfiniteListEvent.replaceWhere(
     (T item) => item.id == 1, // bool Function(T) test
@@ -220,7 +218,6 @@ bloc.add(
   )
 );
 = bloc.triggerReplaceWhere(...);
-
 
 ```
 
@@ -263,39 +260,39 @@ add(FoodEventHadForLaunch());
 
 
 ---
-## Additional features
+## Additional Features
 
-### Querying items from the list
-There are some query methods for InfiniteList as same as the `List`.
-You can find those in [here](https://github.com/Hwan-seok/flutter_infinite_list/blob/main/lib/src/bloc_base/queryable.dart)
+### Querying Items from the List
 
+There are several query methods for InfiniteList, similar to `List`. You can find them [here](https://github.com/Hwan-seok/flutter_infinite_list/blob/main/lib/src/bloc_base/queryable.dart).
 
-### Change the fetching size
+### Change the Fetching Size
 
-The size argument passed to the `fetch` is 10 by default. You can change this behavior by passing the `limit`
-when creating either `InfiniteListBloc` or `InfiniteListCubit`:
+By default, the `fetch` size argument is 10. You can change this behavior by passing the `limit` when creating either `InfiniteListBloc` or `InfiniteListCubit`:
+
 ```dart
 class MyBloc extends InfiniteListBloc<...> {
   MyBloc() : super(limit: 30, ...);
 }
 ```
-Additionally, you can change your size dynamically by `registerLimit(int size)` in your own bloc.
+Additionally, you can change the fetching size dynamically using `registerLimit(int size)` in your bloc:
 ```dart
 
 class MyBloc extends InfiniteListBloc<...> {
   ...
   Future<void> myFetchNext() async {
     await fetchNext();
-    if(state.itemCount > 30) registerLimit(100);
+    if(state.itemCount > 30) {
+      registerLimit(100);
+    }
   }
 }
 
 ```
 
-### Await for Bloc event to be completed
-In some situation, you need to ensure the event is completed but that one is somewhat tricky.
-But don't worry, all [default methods for bloc](#comfortable-methods) return a `Future`, so you can
-ensure that the event processed successfully after awaiting it.
+### Awaiting Bloc Event Completion
+
+In some situations, you may need to ensure that an event is completed, but this can be somewhat tricky. Fortunately, all [default methods for bloc](#comfortable-methods) return a `Future`, so you can ensure that the event is processed successfully after awaiting it.
 
 ```dart
 bloc.triggerAddItem(1); // equivalent to `bloc.add(InfiniteListEvent.addItem(1))`
